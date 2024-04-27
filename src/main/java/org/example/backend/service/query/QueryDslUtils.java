@@ -1,11 +1,13 @@
 package org.example.backend.service.query;
 
 import com.querydsl.core.types.dsl.EntityPathBase;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 
 @Slf4j
+@UtilityClass
 public class QueryDslUtils {
 
     private static final String BASE_PACKAGE = "org.example.backend.db.model";
