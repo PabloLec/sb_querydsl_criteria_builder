@@ -1,4 +1,4 @@
-package org.example.backend.service;
+package org.example.backend.service.query;
 
 import com.querydsl.core.types.dsl.EntityPathBase;
 import lombok.extern.slf4j.Slf4j;
