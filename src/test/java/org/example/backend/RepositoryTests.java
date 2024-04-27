@@ -1,12 +1,7 @@
 package org.example.backend;
 
 import org.example.backend.db.model.*;
-import org.example.backend.db.repository.*;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,50 +9,8 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DataJpaTest
-@ActiveProfiles("test")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class RepositoryTests {
 
-    @Autowired
-    private LibraryRepository libraryRepository;
-
-    @Autowired
-    private AuthorRepository authorRepository;
-
-    @Autowired
-    private BookRepository bookRepository;
-
-    @Autowired
-    private TagRepository tagRepository;
-
-    @Autowired
-    private BookTagRepository bookTagRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private BorrowedBookRepository borrowedBookRepository;
-
-    @Autowired
-    private PublisherRepository publisherRepository;
-
-    @Autowired
-    private BookPublisherRepository bookPublisherRepository;
-
-    @Autowired
-    private LibraryStaffRepository libraryStaffRepository;
-
-    @Autowired
-    private MembershipRepository membershipRepository;
-
-    @Autowired
-    private LibraryEventRepository libraryEventRepository;
-
-    @Autowired
-    private EventParticipantRepository eventParticipantRepository;
-
+class RepositoryTests extends AbstractIntegrationTest {
 
     @Test
     void testLibraryInsertAndGet() {
