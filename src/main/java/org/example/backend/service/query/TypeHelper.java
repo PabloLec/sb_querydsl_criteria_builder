@@ -13,17 +13,42 @@ class TypeHelper {
 
     public static Object castValue(Class<?> entityClass, String fieldName, String value, boolean isCollection) {
         try {
-            Field field = entityClass.getDeclaredField(fieldName);
-            Class<?> fieldType = field.getType();
+            Class<?> currentType = entityClass;
+            Field field = null;
+
+            String[] fieldParts = fieldName.split("\\.");
+            for (String part : fieldParts) {
+                field = getField(currentType, part);
+                currentType = field.getType();
+            }
+
+            if (field == null) {
+                throw new IllegalArgumentException("Field not found in the given path: " + fieldName);
+            }
+
             if (isCollection) {
+                Class<?> fieldType = field.getType();
                 return castCollection(fieldType, value);
             } else {
-                return castSingleValue(fieldType, value);
+                return castSingleValue(currentType, value);
             }
         } catch (NoSuchFieldException e) {
-            throw new IllegalArgumentException("Field not found: " + fieldName, e);
+            throw new IllegalArgumentException("Field not found in the given path: " + fieldName, e);
         }
     }
+
+    private static Field getField(Class<?> type, String fieldName) throws NoSuchFieldException {
+        Class<?> current = type;
+        while (current != null) {
+            try {
+                return current.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                current = current.getSuperclass();
+            }
+        }
+        throw new NoSuchFieldException("Field not found: " + fieldName);
+    }
+
 
     private static Object castSingleValue(Class<?> fieldType, String value) {
         String typeName = fieldType.getCanonicalName();
@@ -33,7 +58,8 @@ class TypeHelper {
             case "java.time.LocalDate" -> LocalDate.parse(value);
             case "java.time.LocalDateTime" -> LocalDateTime.parse(value);
             case "java.lang.String" -> value;
-            default -> throw new IllegalArgumentException("Unsupported field type for dynamic casting: " + fieldType.getSimpleName());
+            default ->
+                    throw new IllegalArgumentException("Unsupported field type for dynamic casting: " + fieldType.getSimpleName());
         };
     }
 

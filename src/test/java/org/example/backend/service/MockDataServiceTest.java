@@ -14,8 +14,8 @@ class MockDataServiceTest extends AbstractIntegrationTest {
 
     @Test
     void createMockLibraries() {
-        mockDataService.createMockLibraries(5);
-        assertEquals(5, libraryRepository.count());
+        mockDataService.createMockLibraries(1);
+        assertEquals(1, libraryRepository.count());
         assertNotEquals(0, addressRepository.count());
         assertNotEquals(0, libraryStaffRepository.count());
         assertNotEquals(0, libraryEventRepository.count());

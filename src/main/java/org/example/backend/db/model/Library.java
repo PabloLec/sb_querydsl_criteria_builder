@@ -1,15 +1,13 @@
 package org.example.backend.db.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,7 +26,7 @@ public class Library {
     private String phoneNumber;
     private Boolean isOpen;
 
-    @OneToMany(mappedBy = "library")
+    @OneToMany(mappedBy = "library", fetch = FetchType.EAGER)
     private Set<Book> books;
 
     @OneToMany(mappedBy = "library")

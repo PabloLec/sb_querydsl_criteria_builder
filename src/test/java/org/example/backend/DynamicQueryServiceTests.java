@@ -1,9 +1,6 @@
 package org.example.backend;
 
-import org.example.backend.db.model.Book;
-import org.example.backend.db.model.Library;
-import org.example.backend.db.model.Membership;
-import org.example.backend.db.model.User;
+import org.example.backend.db.model.*;
 import org.example.backend.service.query.DynamicQueryService;
 import org.example.backend.service.query.SearchCriterion;
 import org.junit.jupiter.api.Test;
@@ -11,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DynamicQueryServiceTests extends AbstractIntegrationTest {
     @Autowired
@@ -421,4 +418,95 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
         assertEquals(1, result.size());
         assertEquals("Library Two", result.get(0).getName());
     }
+
+    @Test
+    void testComplexLibraryQuery() {
+        // Create and save the library
+        Library library = Library.builder()
+                .name("Complex Research Library")
+                .location("Research Blvd")
+                .openingHours("24/7")
+                .establishedDate(LocalDate.of(1950, 1, 1))
+                .website("http://www.complexresearchlib.com")
+                .email("info@complexlibrary.com")
+                .phoneNumber("9876543210")
+                .isOpen(true)
+                .build();
+        library = libraryRepository.save(library);
+
+        // Create and save multiple authors and books
+        for (int i = 1; i <= 5; i++) {
+            Author author = Author.builder()
+                    .name("Author " + i)
+                    .bio("Bio of Author " + i)
+                    .nationality("Country " + i)
+                    .birthDate(LocalDate.of(1960 + i, 1, 1))
+                    .website("http://author" + i + ".com")
+                    .build();
+            author = authorRepository.save(author);
+
+            for (int j = 1; j <= 3; j++) {
+                Book book = Book.builder()
+                        .title("Deep Learning " + j)
+                        .isbn("978-3-" + i + "0000-" + j)
+                        .publishYear(2000 + j)
+                        .edition(j + "th")
+                        .language("English")
+                        .genre("Science")
+                        .library(library)
+                        .author(author)
+                        .createdAt(LocalDateTime.now().minusDays(j))
+                        .updatedAt(LocalDateTime.now().minusHours(j))
+                        .build();
+                book = bookRepository.save(book);
+
+                // Create and save Tags
+                Tag tag = Tag.builder()
+                        .name("Machine Learning " + i + j)
+                        .description("Tag for Machine Learning " + j)
+                        .build();
+                tag = tagRepository.save(tag);
+
+                // Create and link BookTags
+                BookTag bookTag = new BookTag();
+                bookTag.setBookId(book.getBookId());
+                bookTag.setTagId(tag.getTagId());
+                bookTagRepository.save(bookTag);
+            }
+        }
+
+        // Building complex query criteria with nested conditions
+        SearchCriterion deepLearningCriterion = new SearchCriterion("title", "like", "%Deep Learning%");
+        SearchCriterion bookSubQuery = new SearchCriterion("book", "exists", deepLearningCriterion);
+
+        SearchCriterion authorCriterion = new SearchCriterion("author.name", "like", "%Author 3%");
+        SearchCriterion authorSubQuery = new SearchCriterion("book", "exists", authorCriterion);
+
+        SearchCriterion languageCriterion = new SearchCriterion("language", "eq", "English");
+        SearchCriterion bookLanguageSubQuery = new SearchCriterion("book", "exists", languageCriterion);
+
+        SearchCriterion genreCriterion = new SearchCriterion("genre", "eq", "Science");
+        SearchCriterion bookGenreSubQuery = new SearchCriterion("book", "exists", genreCriterion);
+
+        List<SearchCriterion> criteria = Arrays.asList(
+                new SearchCriterion("name", "like", "%Research Library%"),
+                new SearchCriterion("location", "eq", "Research Blvd"),
+                new SearchCriterion("establishedDate", "gte", LocalDate.of(1950, 1, 1).toString()),
+                bookSubQuery,
+                authorSubQuery,
+                bookLanguageSubQuery,
+                bookGenreSubQuery
+        );
+
+        // Execute query with nested subqueries and complex criteria
+        List<Library> result = (List<Library>) dynamicQueryService.buildDynamicQuery(criteria, "library").fetch();
+
+        // Assert conditions
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertTrue(result.stream().anyMatch(lib -> "Complex Research Library".equals(lib.getName())));
+        assertTrue(result.stream().anyMatch(lib -> lib.getBooks().stream().anyMatch(b -> b.getTitle().contains("Deep Learning"))));
+        assertTrue(result.stream().anyMatch(lib -> lib.getBooks().stream().anyMatch(b -> "Author 3".equals(b.getAuthor().getName()))));
+    }
+
 }
