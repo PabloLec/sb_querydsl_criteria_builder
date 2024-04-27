@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @Data
@@ -25,4 +26,7 @@ public class Author {
     private LocalDate birthDate;
     private LocalDate deathDate;
     private String website;
+
+    @OneToMany(mappedBy = "author")
+    private Set<Book> books;
 }

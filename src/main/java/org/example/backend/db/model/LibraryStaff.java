@@ -16,7 +16,14 @@ public class LibraryStaff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer staffId;
-    private Integer libraryId;
-    private Integer userId;
+
+    @ManyToOne
+    @JoinColumn(name = "library_id")
+    private Library library;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private String role;
 }

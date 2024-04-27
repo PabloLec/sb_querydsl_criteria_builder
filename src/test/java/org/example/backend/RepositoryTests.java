@@ -47,7 +47,7 @@ class RepositoryTests extends AbstractIntegrationTest {
         book.setEdition("Second Edition");
         book.setLanguage("English");
         book.setGenre("Education");
-        book.setAuthorId(author.getAuthorId());
+        book.setAuthor(author);
         book.setCreatedAt(LocalDateTime.now());
         book.setUpdatedAt(LocalDateTime.now());
         book = bookRepository.save(book);
@@ -81,7 +81,7 @@ class RepositoryTests extends AbstractIntegrationTest {
         BookTag bookTag = new BookTag();
         bookTag.setBookId(book.getBookId());
         bookTag.setTagId(tag.getTagId());
-        bookTag = bookTagRepository.save(bookTag);
+        bookTagRepository.save(bookTag);
 
         Tag foundTag = tagRepository.findById(tag.getTagId()).orElse(null);
         BookTag foundBookTag = bookTagRepository.findById(new BookTagId(book.getBookId(), tag.getTagId())).orElse(null);
@@ -113,8 +113,8 @@ class RepositoryTests extends AbstractIntegrationTest {
         book = bookRepository.save(book);
 
         BorrowedBook borrowedBook = new BorrowedBook();
-        borrowedBook.setBookId(book.getBookId());
-        borrowedBook.setUserId(user.getUserId());
+        borrowedBook.setBook(book);
+        borrowedBook.setUser(user);
         borrowedBook.setBorrowDate(LocalDate.now());
         borrowedBook.setReturnDate(LocalDate.now().plusDays(14));
         borrowedBook = borrowedBookRepository.save(borrowedBook);
@@ -124,7 +124,7 @@ class RepositoryTests extends AbstractIntegrationTest {
         assertNotNull(foundUser);
         assertNotNull(foundBorrowedBook);
         assertEquals("user1", foundUser.getUsername());
-        assertEquals(book.getBookId(), foundBorrowedBook.getBookId());
+        assertEquals(book.getBookId(), foundBorrowedBook.getBook().getBookId());
     }
 
     @Test
@@ -148,7 +148,7 @@ class RepositoryTests extends AbstractIntegrationTest {
         BookPublisher bookPublisher = new BookPublisher();
         bookPublisher.setBookId(book.getBookId());
         bookPublisher.setPublisherId(publisher.getPublisherId());
-        bookPublisher = bookPublisherRepository.save(bookPublisher);
+        bookPublisherRepository.save(bookPublisher);
 
         Publisher foundPublisher = publisherRepository.findById(publisher.getPublisherId()).orElse(null);
         BookPublisher foundBookPublisher = bookPublisherRepository.findById(new BookPublisherId(book.getBookId(), publisher.getPublisherId())).orElse(null);
@@ -180,8 +180,8 @@ class RepositoryTests extends AbstractIntegrationTest {
         user = userRepository.save(user);
 
         LibraryStaff libraryStaff = new LibraryStaff();
-        libraryStaff.setLibraryId(library.getLibraryId());
-        libraryStaff.setUserId(user.getUserId());
+        libraryStaff.setLibrary(library);
+        libraryStaff.setUser(user);
         libraryStaff.setRole("Librarian");
         libraryStaff = libraryStaffRepository.save(libraryStaff);
 
@@ -213,8 +213,8 @@ class RepositoryTests extends AbstractIntegrationTest {
         library = libraryRepository.save(library);
 
         Membership membership = new Membership();
-        membership.setUserId(user.getUserId());
-        membership.setLibraryId(library.getLibraryId());
+        membership.setUser(user);
+        membership.setLibrary(library);
         membership.setJoinDate(LocalDate.now());
         membership.setExpirationDate(LocalDate.now().plusYears(1));
         membership.setMembershipStatus("Active");
@@ -239,7 +239,7 @@ class RepositoryTests extends AbstractIntegrationTest {
         library = libraryRepository.save(library);
 
         LibraryEvent libraryEvent = new LibraryEvent();
-        libraryEvent.setLibraryId(library.getLibraryId());
+        libraryEvent.setLibrary(library);
         libraryEvent.setEventName("Book Fair");
         libraryEvent.setEventDate(LocalDate.now().plusMonths(1));
         libraryEvent.setDescription("Annual book fair with guest authors and signings.");
@@ -259,7 +259,7 @@ class RepositoryTests extends AbstractIntegrationTest {
         EventParticipant eventParticipant = new EventParticipant();
         eventParticipant.setEventId(libraryEvent.getEventId());
         eventParticipant.setUserId(user.getUserId());
-        eventParticipant = eventParticipantRepository.save(eventParticipant);
+        eventParticipantRepository.save(eventParticipant);
 
         EventParticipant foundEventParticipant = eventParticipantRepository.findById(new EventParticipantId(libraryEvent.getEventId(), user.getUserId())).orElse(null);
         assertNotNull(foundEventParticipant);

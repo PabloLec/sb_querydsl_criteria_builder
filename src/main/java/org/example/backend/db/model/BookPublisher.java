@@ -1,9 +1,6 @@
 package org.example.backend.db.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +15,18 @@ import lombok.NoArgsConstructor;
 @IdClass(BookPublisherId.class)
 public class BookPublisher {
     @Id
+    @Column(name = "book_id")
     private Integer bookId;
+
     @Id
+    @Column(name = "publisher_id")
     private Integer publisherId;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    private Book book;
+
+    @ManyToOne
+    @JoinColumn(name = "publisher_id", insertable = false, updatable = false)
+    private Publisher publisher;
 }

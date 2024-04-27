@@ -19,8 +19,15 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer reviewId;
-    private Integer bookId;
-    private Integer userId;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private BigDecimal rating;
     private String comment;
     private LocalDate reviewDate;

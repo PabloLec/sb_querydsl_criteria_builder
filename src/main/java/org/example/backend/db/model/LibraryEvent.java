@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Data
 @Entity
@@ -19,10 +20,17 @@ public class LibraryEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer eventId;
-    private Integer libraryId;
+
+    @ManyToOne
+    @JoinColumn(name = "library_id")
+    private Library library;
+
     private String eventName;
     private LocalDate eventDate;
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "event")
+    private Set<EventParticipant> participants;
 }

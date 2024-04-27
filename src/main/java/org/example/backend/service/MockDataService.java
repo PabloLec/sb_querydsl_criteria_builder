@@ -81,8 +81,8 @@ public class MockDataService {
         for (int i = 0; i < staffCount; i++) {
             User user = createUser();
             LibraryStaff libraryStaff = LibraryStaff.builder()
-                    .libraryId(library.getLibraryId())
-                    .userId(user.getUserId())
+                    .library(library)
+                    .user(user)
                     .role("Role " + random.nextInt(5))
                     .build();
 
@@ -96,7 +96,7 @@ public class MockDataService {
         int eventCount = random.nextInt(5);
         for (int i = 0; i < eventCount; i++) {
             LibraryEvent libraryEvent = LibraryEvent.builder()
-                    .libraryId(library.getLibraryId())
+                    .library(library)
                     .eventName("Event " + random.nextInt(1000))
                     .eventDate(LocalDate.now().plusDays(random.nextInt(365)))
                     .description("Description " + random.nextInt(1000))
@@ -131,8 +131,8 @@ public class MockDataService {
         for (int i = 0; i < memberCount; i++) {
             User user = createUser();
             Membership membership = Membership.builder()
-                    .userId(user.getUserId())
-                    .libraryId(library.getLibraryId())
+                    .user(user)
+                    .library(library)
                     .joinDate(LocalDate.now().minusDays(random.nextInt(365)))
                     .expirationDate(LocalDate.now().plusDays(random.nextInt(365)))
                     .membershipStatus(random.nextBoolean() ? "Active" : "Inactive")
@@ -178,8 +178,8 @@ public class MockDataService {
                 .edition("Edition " + random.nextInt(10))
                 .language("Language " + random.nextInt(10))
                 .genre("Genre " + random.nextInt(10))
-                .libraryId(library.getLibraryId())
-                .authorId(author.getAuthorId())
+                .library(library)
+                .author(author)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -217,8 +217,8 @@ public class MockDataService {
         for (int i = 0; i < borrowCount; i++) {
             User user = createUser();
             BorrowedBook borrowedBook = BorrowedBook.builder()
-                    .bookId(book.getBookId())
-                    .userId(user.getUserId())
+                    .book(book)
+                    .user(user)
                     .borrowDate(LocalDate.now().minusDays(random.nextInt(30)))
                     .returnDate(LocalDate.now().plusDays(random.nextInt(30)))
                     .build();
@@ -234,8 +234,8 @@ public class MockDataService {
         for (int i = 0; i < reviewCount; i++) {
             User user = createUser();
             Review review = Review.builder()
-                    .bookId(book.getBookId())
-                    .userId(user.getUserId())
+                    .book(book)
+                    .user(user)
                     .rating(BigDecimal.valueOf(random.nextDouble() * 5).setScale(2, RoundingMode.HALF_UP))
                     .comment("Comment " + random.nextInt(1000))
                     .reviewDate(LocalDate.now().minusDays(random.nextInt(100)))

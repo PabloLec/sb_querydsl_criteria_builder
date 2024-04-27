@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Entity
@@ -24,4 +25,19 @@ public class User {
     private String fullName;
     private LocalDate dateOfBirth;
     private String gender;
+
+    @OneToMany(mappedBy = "user")
+    private Set<BorrowedBook> borrowedBooks;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Review> reviews;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Membership> memberships;
+
+    @OneToMany(mappedBy = "user")
+    private Set<EventParticipant> eventParticipants;
+
+    @OneToMany(mappedBy = "user")
+    private Set<LibraryStaff> libraryStaff;
 }

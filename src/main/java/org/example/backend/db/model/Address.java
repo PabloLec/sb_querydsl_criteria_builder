@@ -16,7 +16,14 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer addressId;
+
+    @Column(insertable = false, updatable = false, name = "library_id")
     private Integer libraryId;
+
+    @ManyToOne
+    @JoinColumn(name = "library_id")
+    private Library library;
+
     private String street;
     private String city;
     private String state;

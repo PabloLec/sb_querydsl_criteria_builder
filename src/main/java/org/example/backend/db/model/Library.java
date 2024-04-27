@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Entity
@@ -26,4 +27,16 @@ public class Library {
     private String email;
     private String phoneNumber;
     private Boolean isOpen;
+
+    @OneToMany(mappedBy = "library")
+    private Set<Book> books;
+
+    @OneToMany(mappedBy = "library")
+    private Set<Membership> memberships;
+
+    @OneToMany(mappedBy = "library")
+    private Set<LibraryEvent> events;
+
+    @OneToMany(mappedBy = "library")
+    private Set<LibraryStaff> staff;
 }
