@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +34,10 @@ class DynamicFieldCaster {
             }
         } catch (NoSuchFieldException e) {
             throw new IllegalArgumentException("Field not found in the given path: " + fieldName, e);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format: " + value + " on field: " + fieldName, e);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid number format: " + value + " on field: " + fieldName, e);
         }
     }
 

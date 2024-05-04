@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class QueryDslConfiguration {
+public class QueryBuilderConfiguration {
     private final Map<String, EntityPathBase<?>> mappings = new HashMap<>();
 
     @Bean

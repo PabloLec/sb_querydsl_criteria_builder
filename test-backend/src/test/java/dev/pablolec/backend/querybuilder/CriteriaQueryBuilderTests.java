@@ -1,5 +1,6 @@
-package dev.pablolec.backend;
+package dev.pablolec.backend.querybuilder;
 
+import dev.pablolec.backend.AbstractIntegrationTest;
 import dev.pablolec.backend.db.model.*;
 import dev.pablolec.querybuilder.CriteriaQueryBuilder;
 import dev.pablolec.querybuilder.SearchCriterion;

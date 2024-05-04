@@ -1,5 +1,6 @@
-package dev.pablolec.backend;
+package dev.pablolec.backend.db;
 
+import dev.pablolec.backend.AbstractIntegrationTest;
 import dev.pablolec.backend.db.model.*;
 import org.junit.jupiter.api.Test;
 
