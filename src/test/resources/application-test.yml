@@ -1,5 +1,5 @@
 spring:
   datasource:
-    url: jdbc:sqlite::memory:database
+    url: "jdbc:sqlite::memory:"
   jpa:
     show-sql: true
