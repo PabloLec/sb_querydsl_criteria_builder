@@ -475,7 +475,6 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
             }
         }
 
-        // Building complex query criteria with nested conditions
         SearchCriterion deepLearningCriterion = new SearchCriterion("title", "like", "%Deep Learning%");
         SearchCriterion bookSubQuery = new SearchCriterion("book", "exists", deepLearningCriterion);
 
@@ -498,10 +497,8 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 bookGenreSubQuery
         );
 
-        // Execute query with nested subqueries and complex criteria
         List<Library> result = (List<Library>) dynamicQueryService.buildDynamicQuery(criteria, "library").fetch();
 
-        // Assert conditions
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertTrue(result.stream().anyMatch(lib -> "Complex Research Library".equals(lib.getName())));
@@ -509,4 +506,58 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
         assertTrue(result.stream().anyMatch(lib -> lib.getBooks().stream().anyMatch(b -> "Author 3".equals(b.getAuthor().getName()))));
     }
 
+    @Test
+    void testMultiLevelNestedSubQuery() {
+        Library library = Library.builder()
+                .name("Nested Query Library")
+                .location("Nested City")
+                .openingHours("09:00-18:00")
+                .establishedDate(LocalDate.of(2000, 1, 1))
+                .website("http://nestedlibrary.com")
+                .build();
+
+        libraryRepository.save(library);
+
+        User user = User.builder()
+                .username("nesteduser")
+                .email("user@library.org")
+                .password("secure123")
+                .fullName("Nested User")
+                .dateOfBirth(LocalDate.of(1990, 1, 1))
+                .build();
+
+        userRepository.save(user);
+
+        LibraryEvent event = LibraryEvent.builder()
+                .eventName("Nested Event")
+                .eventDate(LocalDate.now())
+                .description("Nested Event Description")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .library(library)
+                .build();
+
+        libraryEventRepository.save(event);
+
+        EventParticipant participant = EventParticipant.builder()
+                .eventId(event.getEventId())
+                .userId(user.getUserId())
+                .build();
+
+        eventParticipantRepository.save(participant);
+
+
+        SearchCriterion userCriterion = new SearchCriterion("username", "eq", "nesteduser");
+        SearchCriterion participantSubQuery = new SearchCriterion("user", "exists", userCriterion);
+        SearchCriterion eventCriterion = new SearchCriterion("participant", "exists", participantSubQuery);
+        SearchCriterion librarySubQuery = new SearchCriterion("event", "exists", eventCriterion);
+        List<SearchCriterion> criteria = List.of(
+                new SearchCriterion("name", "eq", "Nested Query Library"),
+                librarySubQuery
+        );
+
+        List<Library> result = (List<Library>) dynamicQueryService.buildDynamicQuery(criteria, "library").fetch();
+        assertEquals(1, result.size());
+        assertEquals("Nested Query Library", result.getFirst().getName());
+    }
 }

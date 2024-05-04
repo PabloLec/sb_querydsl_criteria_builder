@@ -29,8 +29,4 @@ public class QueryDslClassMapper {
         }
         return entityPath;
     }
-
-    public Map<String, EntityPathBase<?>> getMappings() {
-        return entityMappings;
-    }
 }

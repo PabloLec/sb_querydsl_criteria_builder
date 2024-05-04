@@ -10,7 +10,6 @@ import java.util.List;
 
 @UtilityClass
 class TypeHelper {
-
     public static Object castValue(Class<?> entityClass, String fieldName, String value, boolean isCollection) {
         try {
             Class<?> currentType = entityClass;
