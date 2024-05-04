@@ -1,18 +1,14 @@
-package dev.pablolec.backend.service.query.querydsl;
+package dev.pablolec.querybuilder;
 
 import com.querydsl.core.types.dsl.EntityPathBase;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Map;
 
-@Component
-public class QueryDslClassMapper {
+public class EntityPathResolver {
     private final Map<String, EntityPathBase<?>> entityMappings;
 
-    @Autowired
-    public QueryDslClassMapper(Map<String, EntityPathBase<?>> entityMappings) {
+    public EntityPathResolver(Map<String, EntityPathBase<?>> entityMappings) {
         if (entityMappings == null || entityMappings.isEmpty()) {
             throw new IllegalArgumentException("Entity mappings cannot be null or empty");
         }

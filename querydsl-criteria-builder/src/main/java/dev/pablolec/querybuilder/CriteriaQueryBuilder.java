@@ -1,32 +1,25 @@
-package dev.pablolec.backend.service.query;
+package dev.pablolec.querybuilder;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
-import dev.pablolec.backend.service.query.querydsl.QueryDslClassMapper;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-import static dev.pablolec.backend.service.query.ExpressionBuilder.buildExpression;
-import static dev.pablolec.backend.service.query.ExpressionBuilder.buildSubQueryExpression;
 
-@Service
-@Slf4j
 @RequiredArgsConstructor
-public class DynamicQueryService {
+public class CriteriaQueryBuilder {
 
     private final EntityManager entityManager;
-    private final QueryDslClassMapper queryDslClassMapper;
+    private final EntityPathResolver entityPathResolver;
 
-    public <T> JPAQuery<T> buildDynamicQuery(List<SearchCriterion> criteria, Class<T> targetClass) {
-        @SuppressWarnings("unchecked") EntityPathBase<T> rootEntityPath = (EntityPathBase<T>) queryDslClassMapper.getEntityPathBase(targetClass);
+    public <T> JPAQuery<T> buildQuery(List<SearchCriterion> criteria, Class<T> targetClass) {
+        @SuppressWarnings("unchecked") EntityPathBase<T> rootEntityPath = (EntityPathBase<T>) entityPathResolver.getEntityPathBase(targetClass);
         @SuppressWarnings("unchecked") JPAQuery<T> query = (JPAQuery<T>) new JPAQuery<>(entityManager).from(rootEntityPath);
 
         criteria.stream()
@@ -38,7 +31,7 @@ public class DynamicQueryService {
 
     private BooleanExpression buildExpressionRecursive(SearchCriterion criterion, EntityPathBase<?> currentEntityPath) {
         if (criterion.isSubQuery()) {
-            EntityPathBase<?> childEntityPath = queryDslClassMapper.getEntityPathBase(criterion.getField());
+            EntityPathBase<?> childEntityPath = entityPathResolver.getEntityPathBase(criterion.getField());
             BooleanExpression subExpression = buildExpressionRecursive(criterion.getSubCriterion(), childEntityPath);
 
             JPAQuery<?> subQuery = new JPAQuery<>();
@@ -46,10 +39,10 @@ public class DynamicQueryService {
             BooleanExpression joinCondition = getJoinCondition(currentEntityPath, childEntityPath);
             subQuery.where(subExpression, joinCondition);
 
-            return buildSubQueryExpression(criterion, subQuery);
+            return ExpressionBuilder.buildSubQueryExpression(criterion, subQuery);
         } else {
             PathBuilder<?> pathBuilder = new PathBuilder<>(currentEntityPath.getType(), currentEntityPath.getMetadata().getName());
-            return buildExpression(pathBuilder, criterion);
+            return ExpressionBuilder.buildExpression(pathBuilder, criterion);
         }
     }
 

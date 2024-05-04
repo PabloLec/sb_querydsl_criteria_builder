@@ -1,8 +1,8 @@
 package dev.pablolec.backend;
 
 import dev.pablolec.backend.db.model.*;
-import dev.pablolec.backend.service.query.DynamicQueryService;
-import dev.pablolec.backend.service.query.SearchCriterion;
+import dev.pablolec.querybuilder.CriteriaQueryBuilder;
+import dev.pablolec.querybuilder.SearchCriterion;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,9 +13,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DynamicQueryServiceTests extends AbstractIntegrationTest {
+class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     @Autowired
-    private DynamicQueryService dynamicQueryService;
+    private CriteriaQueryBuilder criteriaQueryBuilder;
 
     @Test
     void testSimpleLibraryByName() {
@@ -35,7 +35,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("name", "eq", "Bibliothèque Nationale")
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Bibliothèque Nationale", result.getFirst().getName());
     }
@@ -72,7 +72,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("book", "exists", subCriterion)
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
 
         assertEquals(1, result.size());
         assertEquals("Library with Books", result.getFirst().getName());
@@ -117,7 +117,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("membership", "exists", subCriterion)
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
 
         assertEquals(1, result.size());
         assertEquals("Multi-Criteria Library", result.getFirst().getName());
@@ -155,7 +155,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("book", "exists", new SearchCriterion("title", "like", "%Python%"))
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
 
         assertEquals(0, result.size());
     }
@@ -178,7 +178,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("location", "eq", "Downtown")
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Local Library", result.getFirst().getName());
     }
@@ -213,7 +213,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("name", "ne", "Library A")
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Library B", result.getFirst().getName());
     }
@@ -250,7 +250,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("book", "notExists", subCriterion)
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Quiet Library", result.getFirst().getName());
     }
@@ -287,7 +287,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("book", "exists", subCriterion)
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Genre Specific Library", result.getFirst().getName());
     }
@@ -323,7 +323,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("publishYear", "gt", "1990")
         );
 
-        List<Book> result = dynamicQueryService.buildDynamicQuery(criteria, Book.class).fetch();
+        List<Book> result = criteriaQueryBuilder.buildQuery(criteria, Book.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Historical Events", result.getFirst().getTitle());
     }
@@ -346,7 +346,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("establishedDate", "lte", LocalDate.of(2010, 1, 1).toString())
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Night Library", result.getFirst().getName());
     }
@@ -369,7 +369,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("establishedDate", "gte", LocalDate.of(2010, 1, 1).toString())
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Modern Library", result.getFirst().getName());
     }
@@ -391,7 +391,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("libraryId", "in", ids.toString())
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(2, result.size());
         assertTrue(result.stream().anyMatch(lib -> lib.getName().equals("Library One")));
         assertTrue(result.stream().anyMatch(lib -> lib.getName().equals("Library Two")));
@@ -414,7 +414,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 new SearchCriterion("libraryId", "notIn", ids.toString())
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Library Two", result.getFirst().getName());
     }
@@ -497,7 +497,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 bookGenreSubQuery
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -556,7 +556,7 @@ class DynamicQueryServiceTests extends AbstractIntegrationTest {
                 librarySubQuery
         );
 
-        List<Library> result = dynamicQueryService.buildDynamicQuery(criteria, Library.class).fetch();
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Nested Query Library", result.getFirst().getName());
     }

@@ -1,4 +1,4 @@
-package dev.pablolec.backend.service.query;
+package dev.pablolec.querybuilder;
 
 import lombok.experimental.UtilityClass;
 
@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @UtilityClass
-class TypeHelper {
+class DynamicFieldCaster {
     public static Object castValue(Class<?> entityClass, String fieldName, String value, boolean isCollection) {
         try {
             Class<?> currentType = entityClass;

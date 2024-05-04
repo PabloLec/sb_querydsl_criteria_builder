@@ -1,4 +1,4 @@
-package dev.pablolec.backend.service.query;
+package dev.pablolec.querybuilder;
 
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -12,7 +12,7 @@ import java.util.List;
 public class ExpressionBuilder {
     public static BooleanExpression buildExpression(PathBuilder<?> entityPath, SearchCriterion criterion) {
         boolean isCollection = criterion.getOp().equals("in") || criterion.getOp().equals("notIn");
-        Object castedValue = TypeHelper.castValue(entityPath.getType(), criterion.getField(), criterion.getValue(), isCollection);
+        Object castedValue = DynamicFieldCaster.castValue(entityPath.getType(), criterion.getField(), criterion.getValue(), isCollection);
 
         return switch (criterion.getOp()) {
             case "eq", "ne" -> handleBasicComparisons(entityPath, criterion.getField(), castedValue, criterion.getOp());
