@@ -25,9 +25,9 @@ public class DynamicQueryService {
     private final EntityManager entityManager;
     private final QueryDslClassMapper queryDslClassMapper;
 
-    public JPAQuery<?> buildDynamicQuery(List<SearchCriterion> criteria, String entityPathString) {
-        EntityPathBase<?> rootEntityPath = queryDslClassMapper.getEntityPathBase(entityPathString);
-        JPAQuery<?> query = new JPAQuery<>(entityManager).from(rootEntityPath);
+    public <T> JPAQuery<T> buildDynamicQuery(List<SearchCriterion> criteria, Class<T> targetClass) {
+        @SuppressWarnings("unchecked") EntityPathBase<T> rootEntityPath = (EntityPathBase<T>) queryDslClassMapper.getEntityPathBase(targetClass);
+        @SuppressWarnings("unchecked") JPAQuery<T> query = (JPAQuery<T>) new JPAQuery<>(entityManager).from(rootEntityPath);
 
         criteria.stream()
                 .map(criterion -> buildExpressionRecursive(criterion, rootEntityPath))

@@ -29,4 +29,19 @@ public class QueryDslClassMapper {
         }
         return entityPath;
     }
+
+    public EntityPathBase<?> getEntityPathBase(Class<?> targetClass) {
+        if (targetClass == null) {
+            throw new IllegalArgumentException("Target class is null");
+        }
+
+        for (EntityPathBase<?> entityPath : entityMappings.values()) {
+            if (entityPath.getRoot().getType().equals(targetClass)) {
+                return entityPath;
+            }
+        }
+
+        throw new IllegalStateException("No matching EntityPathBase found for '" + targetClass.getSimpleName() + "'");
+    }
+
 }
