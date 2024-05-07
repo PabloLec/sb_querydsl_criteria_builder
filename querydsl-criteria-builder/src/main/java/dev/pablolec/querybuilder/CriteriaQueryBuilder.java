@@ -18,10 +18,22 @@ public class CriteriaQueryBuilder {
     private final EntityManager entityManager;
     private final EntityPathResolver entityPathResolver;
 
+    @SuppressWarnings("unchecked")
     public <T> JPAQuery<T> buildQuery(List<SearchCriterion> criteria, Class<T> targetClass) {
-        @SuppressWarnings("unchecked") EntityPathBase<T> rootEntityPath = (EntityPathBase<T>) entityPathResolver.getEntityPathBase(targetClass);
-        @SuppressWarnings("unchecked") JPAQuery<T> query = (JPAQuery<T>) new JPAQuery<>(entityManager).from(rootEntityPath);
+        EntityPathBase<T> rootEntityPath = (EntityPathBase<T>) entityPathResolver.getEntityPathBase(targetClass);
+        JPAQuery<T> query = (JPAQuery<T>) new JPAQuery<>(entityManager).from(rootEntityPath);
 
+        return (JPAQuery<T>) buildQuery(criteria, rootEntityPath, query);
+    }
+
+    public JPAQuery<?> buildQuery(List<SearchCriterion> criteria, String entityPathString) {
+        EntityPathBase<?> rootEntityPath = entityPathResolver.getEntityPathBase(entityPathString);
+        JPAQuery<?> query = new JPAQuery<>(entityManager).from(rootEntityPath);
+
+        return buildQuery(criteria, rootEntityPath, query);
+    }
+
+    private JPAQuery<?> buildQuery(List<SearchCriterion> criteria, EntityPathBase<?> rootEntityPath, JPAQuery<?> query) {
         criteria.stream()
                 .map(criterion -> buildExpressionRecursive(criterion, rootEntityPath))
                 .forEach(query::where);
@@ -31,19 +43,34 @@ public class CriteriaQueryBuilder {
 
     private BooleanExpression buildExpressionRecursive(SearchCriterion criterion, EntityPathBase<?> currentEntityPath) {
         if (criterion.isSubQuery()) {
-            EntityPathBase<?> childEntityPath = entityPathResolver.getEntityPathBase(criterion.getField());
-            BooleanExpression subExpression = buildExpressionRecursive(criterion.getSubCriterion(), childEntityPath);
+            validateSubQueryCriteria(criterion.getSubCriteria());
 
-            JPAQuery<?> subQuery = new JPAQuery<>();
-            subQuery.from(childEntityPath);
-            BooleanExpression joinCondition = getJoinCondition(currentEntityPath, childEntityPath);
-            subQuery.where(subExpression, joinCondition);
+            EntityPathBase<?> childEntityPath = entityPathResolver.getEntityPathBase(criterion.getField());
+            JPAQuery<?> subQuery = buildSubQuery(currentEntityPath, childEntityPath);
+            buildQuery(criterion.getSubCriteria(), childEntityPath, subQuery);
 
             return ExpressionBuilder.buildSubQueryExpression(criterion, subQuery);
         } else {
             PathBuilder<?> pathBuilder = new PathBuilder<>(currentEntityPath.getType(), currentEntityPath.getMetadata().getName());
             return ExpressionBuilder.buildExpression(pathBuilder, criterion);
         }
+    }
+
+    private void validateSubQueryCriteria(List<SearchCriterion> subCriteria) {
+        if (subCriteria == null) {
+            throw new IllegalArgumentException("Sub query criteria cannot be null");
+        } else if (subCriteria.isEmpty()) {
+            throw new IllegalArgumentException("Sub query criteria cannot be empty");
+        }
+    }
+
+    private JPAQuery<?> buildSubQuery(EntityPathBase<?> currentEntityPath, EntityPathBase<?> childEntityPath) {
+        JPAQuery<?> subQuery = new JPAQuery<>();
+        subQuery.from(childEntityPath);
+        BooleanExpression joinCondition = getJoinCondition(currentEntityPath, childEntityPath);
+        subQuery.where(joinCondition);
+
+        return subQuery;
     }
 
     private BooleanExpression getJoinCondition(EntityPathBase<?> parentEntityPath, EntityPathBase<?> childEntityPath) {

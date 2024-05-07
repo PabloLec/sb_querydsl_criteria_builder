@@ -70,7 +70,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
 
         SearchCriterion subCriterion = new SearchCriterion("title", "like", "%Java%");
         List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("book", "exists", subCriterion)
+                new SearchCriterion("book", "exists", List.of(subCriterion))
         );
 
         List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
@@ -115,7 +115,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         SearchCriterion subCriterion = new SearchCriterion("membershipStatus", "eq", "Active");
         List<SearchCriterion> criteria = List.of(
                 new SearchCriterion("name", "eq", "Multi-Criteria Library"),
-                new SearchCriterion("membership", "exists", subCriterion)
+                new SearchCriterion("membership", "exists", List.of(subCriterion))
         );
 
         List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
@@ -153,7 +153,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
 
         List<SearchCriterion> criteria = List.of(
                 new SearchCriterion("name", "eq", "Library with Books"),
-                new SearchCriterion("book", "exists", new SearchCriterion("title", "like", "%Python%"))
+                new SearchCriterion("book", "exists", List.of(new SearchCriterion("title", "like", "%Python%")))
         );
 
         List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
@@ -248,7 +248,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
 
         SearchCriterion subCriterion = new SearchCriterion("title", "like", "%Silence%");
         List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("book", "notExists", subCriterion)
+                new SearchCriterion("book", "notExists", List.of(subCriterion))
         );
 
         List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
@@ -285,7 +285,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
 
         SearchCriterion subCriterion = new SearchCriterion("genre", "eq", "Fantasy");
         List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("book", "exists", subCriterion)
+                new SearchCriterion("book", "exists", List.of(subCriterion))
         );
 
         List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
@@ -477,16 +477,16 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         }
 
         SearchCriterion deepLearningCriterion = new SearchCriterion("title", "like", "%Deep Learning%");
-        SearchCriterion bookSubQuery = new SearchCriterion("book", "exists", deepLearningCriterion);
+        SearchCriterion bookSubQuery = new SearchCriterion("book", "exists", List.of(deepLearningCriterion));
 
         SearchCriterion authorCriterion = new SearchCriterion("author.name", "like", "%Author 3%");
-        SearchCriterion authorSubQuery = new SearchCriterion("book", "exists", authorCriterion);
+        SearchCriterion authorSubQuery = new SearchCriterion("book", "exists", List.of(authorCriterion));
 
         SearchCriterion languageCriterion = new SearchCriterion("language", "eq", "English");
-        SearchCriterion bookLanguageSubQuery = new SearchCriterion("book", "exists", languageCriterion);
+        SearchCriterion bookLanguageSubQuery = new SearchCriterion("book", "exists", List.of(languageCriterion));
 
         SearchCriterion genreCriterion = new SearchCriterion("genre", "eq", "Science");
-        SearchCriterion bookGenreSubQuery = new SearchCriterion("book", "exists", genreCriterion);
+        SearchCriterion bookGenreSubQuery = new SearchCriterion("book", "exists", List.of(genreCriterion));
 
         List<SearchCriterion> criteria = Arrays.asList(
                 new SearchCriterion("name", "like", "%Research Library%"),
@@ -549,9 +549,9 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
 
 
         SearchCriterion userCriterion = new SearchCriterion("username", "eq", "nesteduser");
-        SearchCriterion participantSubQuery = new SearchCriterion("user", "exists", userCriterion);
-        SearchCriterion eventCriterion = new SearchCriterion("participant", "exists", participantSubQuery);
-        SearchCriterion librarySubQuery = new SearchCriterion("event", "exists", eventCriterion);
+        SearchCriterion participantSubQuery = new SearchCriterion("user", "exists", List.of(userCriterion));
+        SearchCriterion eventCriterion = new SearchCriterion("participant", "exists", List.of(participantSubQuery));
+        SearchCriterion librarySubQuery = new SearchCriterion("event", "exists", List.of(eventCriterion));
         List<SearchCriterion> criteria = List.of(
                 new SearchCriterion("name", "eq", "Nested Query Library"),
                 librarySubQuery

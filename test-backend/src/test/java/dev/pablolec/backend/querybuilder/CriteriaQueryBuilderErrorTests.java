@@ -60,7 +60,7 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
     @Test
     void testSubQueryWithInvalidField() {
         SearchCriterion subCriterion = new SearchCriterion("nonExistentField", "eq", "Value");
-        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "exists", subCriterion));
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "exists", List.of(subCriterion)));
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
@@ -132,7 +132,7 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
     @Test
     void testUnsupportedSubQueryOperator() {
         SearchCriterion subCriterion = new SearchCriterion("title", "eq", "Java Basics");
-        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "unsupportedSubQueryOperator", subCriterion));
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "unsupportedSubQueryOperator", List.of(subCriterion)));
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
@@ -158,13 +158,27 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
 
     @Test
     void testEmptySubQueryCriterion() {
-        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "exists", (SearchCriterion) null));
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "exists", List.of()));
 
-        Exception exception = assertThrows(NullPointerException.class, () -> {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         });
 
-        String expectedMessage = "Cannot invoke";
+        String expectedMessage = "Sub query criteria cannot be empty";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void testNullSubQueryCriterion() {
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "exists", List.of()));
+        criteria.getFirst().setSubCriteria(null);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        });
+
+        String expectedMessage = "Sub query criteria cannot be null";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
@@ -172,7 +186,7 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
     @Test
     void testSubQueryWithInvalidCollectionField() {
         SearchCriterion subCriterion = new SearchCriterion("invalidField", "in", "[Value1,Value2]");
-        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "exists", subCriterion));
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "exists", List.of(subCriterion)));
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
