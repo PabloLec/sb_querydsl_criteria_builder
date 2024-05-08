@@ -1,5 +1,7 @@
 package dev.pablolec.backend.db.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,5 +27,6 @@ public class Author {
     private String website;
 
     @OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Set<Book> books;
 }

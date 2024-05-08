@@ -1,5 +1,6 @@
 package dev.pablolec.backend.db.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,14 +28,20 @@ public class Library {
     private Boolean isOpen;
 
     @OneToMany(mappedBy = "library", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Set<Book> books;
 
     @OneToMany(mappedBy = "library")
+    @JsonManagedReference
     private Set<Membership> memberships;
 
     @OneToMany(mappedBy = "library")
+
+    @JsonManagedReference
     private Set<LibraryEvent> events;
 
     @OneToMany(mappedBy = "library")
+
+    @JsonManagedReference
     private Set<LibraryStaff> staff;
 }

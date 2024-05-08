@@ -1,5 +1,7 @@
 package dev.pablolec.backend.db.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +22,7 @@ public class Address {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "library_id")
+    @JsonBackReference
     private Library library;
 
     private String street;

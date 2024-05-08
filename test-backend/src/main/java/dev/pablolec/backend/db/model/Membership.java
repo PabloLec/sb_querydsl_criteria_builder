@@ -1,5 +1,6 @@
 package dev.pablolec.backend.db.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,10 +20,12 @@ public class Membership {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "library_id")
+    @JsonBackReference
     private Library library;
 
     private LocalDate joinDate;

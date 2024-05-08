@@ -1,5 +1,6 @@
 package dev.pablolec.backend.db.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,9 +23,11 @@ public class BookTag {
 
     @ManyToOne
     @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    @JsonBackReference
     private Book book;
 
     @ManyToOne
     @JoinColumn(name = "tag_id", insertable = false, updatable = false)
+    @JsonBackReference
     private Tag tag;
 }

@@ -1,5 +1,6 @@
 package dev.pablolec.backend.db.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,9 +23,11 @@ public class EventParticipant {
 
     @ManyToOne
     @JoinColumn(name = "event_id", insertable = false, updatable = false)
+    @JsonBackReference
     private LibraryEvent event;
 
     @ManyToOne
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JsonBackReference
     private User user;
 }

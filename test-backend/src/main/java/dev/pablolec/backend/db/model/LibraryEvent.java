@@ -1,5 +1,7 @@
 package dev.pablolec.backend.db.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +23,7 @@ public class LibraryEvent {
 
     @ManyToOne
     @JoinColumn(name = "library_id")
+    @JsonBackReference
     private Library library;
 
     private String eventName;
@@ -30,5 +33,6 @@ public class LibraryEvent {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "event")
+    @JsonManagedReference
     private Set<EventParticipant> participants;
 }

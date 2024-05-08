@@ -1,5 +1,6 @@
 package dev.pablolec.backend.db.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,5 +21,6 @@ public class Publisher {
     private String website;
 
     @OneToMany(mappedBy = "publisher")
+    @JsonManagedReference
     private Set<BookPublisher> publishedBooks;
 }
