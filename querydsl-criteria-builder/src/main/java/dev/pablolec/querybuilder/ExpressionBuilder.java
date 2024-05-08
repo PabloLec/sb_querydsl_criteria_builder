@@ -22,6 +22,12 @@ public class ExpressionBuilder {
                 }
                 yield entityPath.getString(criterion.getField()).like((String) castedValue);
             }
+            case "notLike" -> {
+                if (!(castedValue instanceof String)) {
+                    throw new IllegalArgumentException("NOT LIKE operation is only valid for String types.");
+                }
+                yield entityPath.getString(criterion.getField()).notLike((String) castedValue);
+            }
             case "gt", "lt", "gte", "lte" ->
                     handleComparisonOperators(entityPath, criterion.getField(), castedValue, criterion.getOp());
             case "in", "notIn" ->

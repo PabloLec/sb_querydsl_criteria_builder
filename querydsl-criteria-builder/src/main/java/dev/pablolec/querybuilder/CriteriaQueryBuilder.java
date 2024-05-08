@@ -35,18 +35,18 @@ public class CriteriaQueryBuilder {
 
     private JPAQuery<?> buildQuery(List<SearchCriterion> criteria, EntityPathBase<?> rootEntityPath, JPAQuery<?> query) {
         criteria.stream()
-                .map(criterion -> buildExpressionRecursive(criterion, rootEntityPath))
+                .map(criterion -> buildExpression(criterion, rootEntityPath))
                 .forEach(query::where);
 
         return query;
     }
 
-    private BooleanExpression buildExpressionRecursive(SearchCriterion criterion, EntityPathBase<?> currentEntityPath) {
+    private BooleanExpression buildExpression(SearchCriterion criterion, EntityPathBase<?> currentEntityPath) {
         if (criterion.isSubQuery()) {
             validateSubQueryCriteria(criterion.getSubCriteria());
 
-            EntityPathBase<?> childEntityPath = entityPathResolver.getEntityPathBase(criterion.getField());
-            JPAQuery<?> subQuery = buildSubQuery(currentEntityPath, childEntityPath);
+            EntityPathBase<?> childEntityPath = entityPathResolver.getEntityPathBase(getFieldPathParts(criterion.getField()).getLast());
+            JPAQuery<?> subQuery = buildSubQuery(currentEntityPath, criterion.getField());
             buildQuery(criterion.getSubCriteria(), childEntityPath, subQuery);
 
             return ExpressionBuilder.buildSubQueryExpression(criterion, subQuery);
@@ -54,6 +54,10 @@ public class CriteriaQueryBuilder {
             PathBuilder<?> pathBuilder = new PathBuilder<>(currentEntityPath.getType(), currentEntityPath.getMetadata().getName());
             return ExpressionBuilder.buildExpression(pathBuilder, criterion);
         }
+    }
+
+    private List<String> getFieldPathParts(String field) {
+        return List.of(field.split("\\."));
     }
 
     private void validateSubQueryCriteria(List<SearchCriterion> subCriteria) {
@@ -64,13 +68,34 @@ public class CriteriaQueryBuilder {
         }
     }
 
-    private JPAQuery<?> buildSubQuery(EntityPathBase<?> currentEntityPath, EntityPathBase<?> childEntityPath) {
+    private JPAQuery<?> buildSubQuery(EntityPathBase<?> currentEntityPath, String field) {
+        List<String> subQueryPathParts = getFieldPathParts(field);
+        JPAQuery<?> subQuery = initializeSubQuery(currentEntityPath, subQueryPathParts);
+        EntityPathBase<?> lastEntityPath = currentEntityPath;
+
+        for (String part : subQueryPathParts) {
+            lastEntityPath = applyJoin(subQuery, lastEntityPath, part);
+        }
+
+        return subQuery;
+    }
+
+    private JPAQuery<?> initializeSubQuery(EntityPathBase<?> parentEntityPath, List<String> subQueryPathParts) {
         JPAQuery<?> subQuery = new JPAQuery<>();
-        subQuery.from(childEntityPath);
-        BooleanExpression joinCondition = getJoinCondition(currentEntityPath, childEntityPath);
+
+        EntityPathBase<?> directChildEntityPath = entityPathResolver.getEntityPathBase(subQueryPathParts.getFirst());
+        subQuery.from(directChildEntityPath);
+        BooleanExpression joinCondition = getJoinCondition(parentEntityPath, directChildEntityPath);
         subQuery.where(joinCondition);
 
         return subQuery;
+    }
+
+    private EntityPathBase<?> applyJoin(JPAQuery<?> subQuery, EntityPathBase<?> currentPath, String part) {
+        EntityPathBase<?> nextEntityPath = entityPathResolver.getEntityPathBase(part);
+        BooleanExpression joinCondition = getJoinCondition(currentPath, nextEntityPath);
+        subQuery.join(nextEntityPath).on(joinCondition);
+        return nextEntityPath;
     }
 
     private BooleanExpression getJoinCondition(EntityPathBase<?> parentEntityPath, EntityPathBase<?> childEntityPath) {

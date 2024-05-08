@@ -42,7 +42,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void testLibraryWithBookChild() {
+    void testLibraryByBookChild() {
         Library library = Library.builder()
                 .name("Library with Books")
                 .location("Somewhere")
@@ -80,7 +80,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void testLibraryWithMultipleChildEntityConditions() {
+    void testLibraryWitRootAndChildEntityConditions() {
         Library library = Library.builder()
                 .name("Multi-Criteria Library")
                 .location("Multi-City")
@@ -93,18 +93,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                 .build();
         libraryRepository.save(library);
 
-        User user = User.builder()
-                .username("user123")
-                .email("user123@library.com")
-                .password("secure123")
-                .fullName("User OneTwoThree")
-                .dateOfBirth(LocalDate.of(1990, 1, 1))
-                .gender("Male")
-                .build();
-        userRepository.save(user);
-
         Membership membership = Membership.builder()
-                .user(user)
                 .library(library)
                 .joinDate(LocalDate.now())
                 .expirationDate(LocalDate.now().plusYears(1))
@@ -162,29 +151,6 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void testLibraryByLocation() {
-        Library library = Library.builder()
-                .name("Local Library")
-                .location("Downtown")
-                .openingHours("08:00-20:00")
-                .establishedDate(LocalDate.of(2000, 1, 1))
-                .website("http://locallibrary.com")
-                .email("contact@locallibrary.com")
-                .phoneNumber("9876543210")
-                .isOpen(true)
-                .build();
-        libraryRepository.save(library);
-
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("location", "eq", "Downtown")
-        );
-
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
-        assertEquals(1, result.size());
-        assertEquals("Local Library", result.getFirst().getName());
-    }
-
-    @Test
     void testLibraryByNameNotEqual() {
         Library library1 = Library.builder()
                 .name("Library A")
@@ -220,7 +186,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void testLibraryWithNoBooks() {
+    void testLibraryByNonExistingBook() {
         Library library = Library.builder()
                 .name("Quiet Library")
                 .location("Suburb")
@@ -257,56 +223,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void testLibraryWithSpecificBookGenre() {
-        Library library = Library.builder()
-                .name("Genre Specific Library")
-                .location("City Center")
-                .openingHours("09:00-21:00")
-                .establishedDate(LocalDate.of(2005, 3, 3))
-                .website("http://genrespecificlibrary.com")
-                .email("genre@library.com")
-                .phoneNumber("1231231234")
-                .isOpen(true)
-                .build();
-        libraryRepository.save(library);
-
-        Book book = Book.builder()
-                .title("Fantasy World")
-                .isbn("111222333")
-                .publishYear(2006)
-                .edition("Second")
-                .language("Spanish")
-                .genre("Fantasy")
-                .library(library)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        bookRepository.save(book);
-
-        SearchCriterion subCriterion = new SearchCriterion("genre", "eq", "Fantasy");
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("book", "exists", List.of(subCriterion))
-        );
-
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
-        assertEquals(1, result.size());
-        assertEquals("Genre Specific Library", result.getFirst().getName());
-    }
-
-    @Test
-    void testLibraryByPublishYearGreaterThan() {
-        Library library = Library.builder()
-                .name("History Library")
-                .location("Downtown")
-                .openingHours("10:00-20:00")
-                .establishedDate(LocalDate.of(1990, 1, 1))
-                .website("http://historylibrary.com")
-                .email("info@historylibrary.com")
-                .phoneNumber("1234567890")
-                .isOpen(true)
-                .build();
-        libraryRepository.save(library);
-
+    void testBookByPublishYearGreaterThan() {
         Book book = Book.builder()
                 .title("Historical Events")
                 .isbn("222333444")
@@ -314,7 +231,6 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                 .edition("First")
                 .language("English")
                 .genre("History")
-                .library(library)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -330,7 +246,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void testLibraryByOpeningHoursLessThan() {
+    void testLibraryByEstablishedDateLowerThanOrEqualTo() {
         Library library = Library.builder()
                 .name("Night Library")
                 .location("Central City")
@@ -421,8 +337,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void testComplexLibraryQuery() {
-        // Create and save the library
+    void testLibraryByMultipleChildEntities() {
         Library library = Library.builder()
                 .name("Complex Research Library")
                 .location("Research Blvd")
@@ -435,7 +350,6 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                 .build();
         library = libraryRepository.save(library);
 
-        // Create and save multiple authors and books
         for (int i = 1; i <= 5; i++) {
             Author author = Author.builder()
                     .name("Author " + i)
@@ -459,20 +373,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                         .createdAt(LocalDateTime.now().minusDays(j))
                         .updatedAt(LocalDateTime.now().minusHours(j))
                         .build();
-                book = bookRepository.save(book);
-
-                // Create and save Tags
-                Tag tag = Tag.builder()
-                        .name("Machine Learning " + i + j)
-                        .description("Tag for Machine Learning " + j)
-                        .build();
-                tag = tagRepository.save(tag);
-
-                // Create and link BookTags
-                BookTag bookTag = new BookTag();
-                bookTag.setBookId(book.getBookId());
-                bookTag.setTagId(tag.getTagId());
-                bookTagRepository.save(bookTag);
+                bookRepository.save(book);
             }
         }
 
@@ -508,7 +409,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void testMultiLevelNestedSubQuery() {
+    void testMultiLevelNestedSubQueryWithSingleSubCriterion() {
         Library library = Library.builder()
                 .name("Nested Query Library")
                 .location("Nested City")
@@ -560,5 +461,153 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Nested Query Library", result.getFirst().getName());
+    }
+
+    @Test
+    void testLibraryByBookChildWithMultipleCriteria() {
+        Library library = Library.builder()
+                .name("Central City Library")
+                .location("Downtown Metropolis")
+                .openingHours("09:00-19:00")
+                .establishedDate(LocalDate.of(1950, 1, 1))
+                .website("http://centralcitylib.org")
+                .email("info@centralcitylib.org")
+                .phoneNumber("1234567890")
+                .isOpen(true)
+                .build();
+        libraryRepository.save(library);
+
+        Book book = Book.builder()
+                .title("Advanced C++ Programming")
+                .isbn("987654321")
+                .publishYear(2018)
+                .edition("2nd")
+                .language("French")
+                .genre("Technology")
+                .library(library)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        bookRepository.save(book);
+
+        SearchCriterion titleCriterion = new SearchCriterion("title", "like", "%C++%");
+        SearchCriterion yearCriterion = new SearchCriterion("publishYear", "gt", "2010");
+        SearchCriterion languageCriterion = new SearchCriterion("language", "eq", "French");
+        SearchCriterion genreCriterion = new SearchCriterion("genre", "notIn", List.of("Science", "Education").toString());
+        SearchCriterion editionCriterion = new SearchCriterion("edition", "ne", "1st");
+        SearchCriterion bookSubQuery = new SearchCriterion("book", "exists", List.of(titleCriterion, yearCriterion, languageCriterion, genreCriterion, editionCriterion));
+
+        List<SearchCriterion> criteria = List.of(
+                new SearchCriterion("name", "eq", "Central City Library"),
+                bookSubQuery
+        );
+
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        assertEquals(1, result.size());
+        assertEquals("Central City Library", result.getFirst().getName());
+    }
+
+    @Test
+    void testMultiLevelNestedSubQueryWithMultipleSubCriteria() {
+        Library library = Library.builder()
+                .name("Expansive Research Library")
+                .location("Capital Metropolis")
+                .openingHours("08:00-22:00")
+                .establishedDate(LocalDate.of(1995, 5, 15))
+                .website("http://researchlibrary.com")
+                .email("contact@researchlibrary.com")
+                .phoneNumber("1231231234")
+                .isOpen(false)
+                .build();
+        libraryRepository.save(library);
+
+        User user = User.builder()
+                .username("researchbuff")
+                .email("buff@research.org")
+                .password("password987")
+                .fullName("Research Buff")
+                .dateOfBirth(LocalDate.of(1985, 12, 25))
+                .gender("Male")
+                .build();
+        userRepository.save(user);
+
+        LibraryStaff staff = LibraryStaff.builder()
+                .user(user)
+                .library(library)
+                .staffId(1)
+                .build();
+
+        libraryStaffRepository.save(staff);
+
+        Book book = Book.builder()
+                .title("Research Methods")
+                .isbn("123456789")
+                .publishYear(2010)
+                .edition("3rd")
+                .language("English")
+                .genre("Research")
+                .library(library)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        bookRepository.save(book);
+
+        BorrowedBook borrowedBook = BorrowedBook.builder()
+                .book(book)
+                .user(user)
+                .borrowDate(LocalDate.now())
+                .returnDate(LocalDate.now().plusDays(30))
+                .build();
+
+        borrowedBookRepository.save(borrowedBook);
+
+        Book bookWithoutUser = Book.builder()
+                .title("Medicine Essentials")
+                .isbn("987654321")
+                .publishYear(2015)
+                .edition("2nd")
+                .language("Spanish")
+                .genre("Research")
+                .library(library)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        bookRepository.save(bookWithoutUser);
+
+        BorrowedBook borrowedBookWithoutUser = BorrowedBook.builder()
+                .book(bookWithoutUser)
+                .borrowDate(LocalDate.now())
+                .returnDate(LocalDate.now().plusDays(30))
+                .build();
+
+        borrowedBookRepository.save(borrowedBookWithoutUser);
+
+        SearchCriterion bookTitleCriterion = new SearchCriterion("book.title", "like", "%Research%");
+        SearchCriterion bookYearCriterion = new SearchCriterion("book.publishYear", "gte", "2010");
+        SearchCriterion bookLanguageCriterion = new SearchCriterion("book.language", "in", List.of("English", "Spanish").toString());
+        List<SearchCriterion> borrowedBookCriteria = List.of(bookTitleCriterion, bookYearCriterion, bookLanguageCriterion);
+
+        List<SearchCriterion> nonBorrowedBookCriteria = List.of(new SearchCriterion("book.title", "like", "%Medicine%"));
+
+        SearchCriterion staffIdCriterion = new SearchCriterion("staffId", "eq", "1");
+        SearchCriterion staffUserFullNameCriterion = new SearchCriterion("user.fullName", "like", "%Buff%");
+        SearchCriterion staffUserDobCriterion = new SearchCriterion("user.dateOfBirth", "lte", LocalDate.of(1990, 1, 1).toString());
+        SearchCriterion staffUserBorrowedBookCriterion = new SearchCriterion("user.borrowedBook", "exists", borrowedBookCriteria);
+        SearchCriterion staffUserNonBorrowedBookCriterion = new SearchCriterion("user.borrowedBook", "notExists", nonBorrowedBookCriteria);
+        List<SearchCriterion> staffCriteria = List.of(staffIdCriterion, staffUserFullNameCriterion, staffUserDobCriterion, staffUserBorrowedBookCriterion, staffUserNonBorrowedBookCriterion);
+
+        SearchCriterion libraryNameCriterion = new SearchCriterion("name", "notLike", "%Test%");
+        SearchCriterion libraryStaffCriterion = new SearchCriterion("staff", "exists", staffCriteria);
+
+        List<SearchCriterion> criteria = List.of(
+                libraryNameCriterion,
+                libraryStaffCriterion
+        );
+
+        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+
+        assertEquals(1, result.size());
     }
 }
