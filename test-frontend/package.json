@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@tanstack/vue-table": "^8.16.0",
+    "@vee-validate/zod": "^4.12.7",
+    "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -17,7 +19,9 @@
     "radix-vue": "^1.7.4",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "vue": "^3.4.21"
+    "vee-validate": "^4.12.7",
+    "vue": "^3.4.21",
+    "zod": "^3.23.7"
   },
   "devDependencies": {
     "@types/node": "^20.12.11",
