@@ -105,7 +105,7 @@ public class ExpressionBuilder {
             PathBuilder<?> entityPath, String fieldName, TemporalAccessor temporalValue, Operator operator) {
         @SuppressWarnings("unchecked")
         Class<T> type = (Class<T>) temporalValue.getClass();
-        TemporalExpression<T> path = entityPath.getDateTime(fieldName, type);
+        TemporalExpression<T> path = entityPath.getTime(fieldName, type);
         T castedValue = type.cast(temporalValue);
 
         return switch (operator) {
