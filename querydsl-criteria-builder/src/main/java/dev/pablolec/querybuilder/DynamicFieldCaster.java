@@ -1,13 +1,12 @@
 package dev.pablolec.querybuilder;
 
-import lombok.experimental.UtilityClass;
-
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
+import lombok.experimental.UtilityClass;
 
 @UtilityClass
 class DynamicFieldCaster {
@@ -53,7 +52,6 @@ class DynamicFieldCaster {
         throw new NoSuchFieldException("Field not found: " + fieldName);
     }
 
-
     private static Object castSingleValue(Class<?> fieldType, String value) {
         String typeName = fieldType.getCanonicalName();
         return switch (typeName) {
@@ -62,13 +60,16 @@ class DynamicFieldCaster {
             case "java.time.LocalDate" -> LocalDate.parse(value);
             case "java.time.LocalDateTime" -> LocalDateTime.parse(value);
             case "java.lang.String" -> value;
-            default ->
-                    throw new IllegalArgumentException("Unsupported field type for dynamic casting: " + fieldType.getSimpleName());
+            default -> throw new IllegalArgumentException(
+                    "Unsupported field type for dynamic casting: " + fieldType.getSimpleName());
         };
     }
 
     private static List<?> castCollection(Class<?> fieldType, String value) {
         String[] elements = value.replace("[", "").replace("]", "").split(",");
-        return Arrays.stream(elements).map(element -> castSingleValue(fieldType, element.trim())).toList();
+
+        return Arrays.stream(elements)
+                .map(element -> castSingleValue(fieldType, element.trim()))
+                .toList();
     }
 }

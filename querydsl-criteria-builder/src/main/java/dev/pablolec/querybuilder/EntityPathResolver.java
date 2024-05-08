@@ -1,7 +1,6 @@
 package dev.pablolec.querybuilder;
 
 import com.querydsl.core.types.dsl.EntityPathBase;
-
 import java.util.Collections;
 import java.util.Map;
 
@@ -39,5 +38,4 @@ public class EntityPathResolver {
 
         throw new IllegalStateException("No matching EntityPathBase found for '" + targetClass.getSimpleName() + "'");
     }
-
 }

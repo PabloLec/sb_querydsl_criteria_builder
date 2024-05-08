@@ -6,12 +6,10 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import dev.pablolec.querybuilder.model.SearchCriterion;
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class CriteriaQueryBuilder {
@@ -34,7 +32,8 @@ public class CriteriaQueryBuilder {
         return addCriteriaToQuery(criteria, rootEntityPath, query);
     }
 
-    private JPAQuery<?> addCriteriaToQuery(List<SearchCriterion> criteria, EntityPathBase<?> rootEntityPath, JPAQuery<?> query) {
+    private JPAQuery<?> addCriteriaToQuery(
+            List<SearchCriterion> criteria, EntityPathBase<?> rootEntityPath, JPAQuery<?> query) {
         criteria.stream()
                 .map(criterion -> getBooleanExpression(criterion, rootEntityPath))
                 .forEach(query::where);
@@ -47,7 +46,8 @@ public class CriteriaQueryBuilder {
             validateSubQueryCriteria(criterion.getSubCriteria());
 
             JPAQuery<?> subQuery = buildSubQuery(rootEntityPath, criterion.getField());
-            EntityPathBase<?> childEntityPath = entityPathResolver.getEntityPathBase(getFieldPathParts(criterion.getField()).getLast());
+            EntityPathBase<?> childEntityPath = entityPathResolver.getEntityPathBase(
+                    getFieldPathParts(criterion.getField()).getLast());
             addCriteriaToQuery(criterion.getSubCriteria(), childEntityPath, subQuery);
 
             return ExpressionBuilder.buildSubQueryExpression(criterion, subQuery);
@@ -99,26 +99,21 @@ public class CriteriaQueryBuilder {
     }
 
     private BooleanExpression getJoinCondition(EntityPathBase<?> parentEntityPath, EntityPathBase<?> childEntityPath) {
-        try {
-            Class<?> parentEntityClass = parentEntityPath.getType();
-            for (Field field : parentEntityClass.getDeclaredFields()) {
-                Class<?> fieldType = field.getType();
+        Class<?> parentEntityClass = parentEntityPath.getType();
 
-                if (fieldType.equals(childEntityPath.getType())) {
-                    return getDirectJoinCondition(parentEntityClass, parentEntityPath, childEntityPath, field);
-                }
+        for (Field field : parentEntityClass.getDeclaredFields()) {
+            PathBuilder<?> parentEntityBuilder = new PathBuilder<>(
+                    parentEntityPath.getType(), parentEntityPath.getMetadata().getName());
+            PathBuilder<?> childEntityBuilder = new PathBuilder<>(
+                    childEntityPath.getType(), childEntityPath.getMetadata().getName());
 
-                if (Iterable.class.isAssignableFrom(fieldType)) {
-                    ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
-                    Class<?> collectionType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-
-                    if (collectionType.equals(childEntityPath.getType())) {
-                        return getCollectionJoinCondition(parentEntityClass, parentEntityPath, childEntityPath, field);
-                    }
-                }
+            if (isDirectJoinApplicable(field, childEntityPath)) {
+                return buildDirectJoinCondition(parentEntityBuilder, childEntityBuilder, field);
             }
-        } catch (Exception e) {
-            throw new IllegalStateException("Error finding join condition between entities", e);
+
+            if (isCollectionJoinApplicable(field, childEntityPath)) {
+                return buildCollectionJoinCondition(parentEntityBuilder, childEntityBuilder, field);
+            }
         }
 
         throw new IllegalStateException("No valid join condition found between entities "
@@ -127,14 +122,30 @@ public class CriteriaQueryBuilder {
                 + childEntityPath.getType().getSimpleName());
     }
 
-    private BooleanExpression getDirectJoinCondition(Class<?> parentEntityClass, EntityPathBase<?> parentEntityPath, EntityPathBase<?> childEntityPath, Field field) {
-        PathBuilder<?> parentEntityBuilder = new PathBuilder<>(parentEntityClass, parentEntityPath.getMetadata().getName());
-        return parentEntityBuilder.get(field.getName()).get("id").eq(new PathBuilder<>(childEntityPath.getType(), childEntityPath.getMetadata().getName()).get("id"));
+    private boolean isDirectJoinApplicable(Field field, EntityPathBase<?> childEntityPath) {
+        return field.getType().equals(childEntityPath.getType());
     }
 
-    private BooleanExpression getCollectionJoinCondition(Class<?> parentEntityClass, EntityPathBase<?> parentEntityPath, EntityPathBase<?> childEntityPath, Field field) {
-        PathBuilder<?> parentEntityBuilder = new PathBuilder<>(parentEntityClass, parentEntityPath.getMetadata().getName());
-        return parentEntityBuilder.getCollection(field.getName(), parentEntityClass).any().get("id").eq(new PathBuilder<>(childEntityPath.getType(), childEntityPath.getMetadata().getName()).get("id"));
+    private boolean isCollectionJoinApplicable(Field field, EntityPathBase<?> childEntityPath) {
+        if (Iterable.class.isAssignableFrom(field.getType())) {
+            ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
+            Class<?> collectionType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+            return collectionType.equals(childEntityPath.getType());
+        }
+        return false;
+    }
+
+    private BooleanExpression buildDirectJoinCondition(
+            PathBuilder<?> parentEntityBuilder, PathBuilder<?> childEntityBuilder, Field field) {
+        return parentEntityBuilder.get(field.getName()).get("id").eq(childEntityBuilder.get("id"));
+    }
+
+    private BooleanExpression buildCollectionJoinCondition(
+            PathBuilder<?> parentEntityBuilder, PathBuilder<?> childEntityBuilder, Field field) {
+        return parentEntityBuilder
+                .getCollection(field.getName(), field.getType())
+                .any()
+                .get("id")
+                .eq(childEntityBuilder.get("id"));
     }
 }
-
