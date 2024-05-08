@@ -20,10 +20,10 @@ public class ExpressionBuilder {
         return switch (operator) {
             case EQ, NE -> handleEqualityOperators(pathBuilder, criterion.getField(), castedValue, operator);
             case LIKE, NOT_LIKE -> handleLikeOperators(pathBuilder, criterion.getField(), castedValue, operator);
-            case GT, LT, GTE, LTE -> handleComparisonOperators(
-                    pathBuilder, criterion.getField(), castedValue, operator);
             case IN, NOT_IN -> handleCollectionOperators(
                     pathBuilder, criterion.getField(), (List<?>) castedValue, operator);
+            case GT, LT, GTE, LTE -> handleComparisonOperators(
+                    pathBuilder, criterion.getField(), castedValue, operator);
             default -> throw new IllegalArgumentException("Unsupported operator: " + operator);
         };
     }
@@ -60,6 +60,15 @@ public class ExpressionBuilder {
         };
     }
 
+    private static BooleanExpression handleCollectionOperators(
+            PathBuilder<?> entityPath, String fieldName, List<?> value, Operator operator) {
+        return switch (operator) {
+            case IN -> entityPath.get(fieldName).in(value);
+            case NOT_IN -> entityPath.get(fieldName).notIn(value);
+            default -> throw new IllegalStateException("Unexpected collection operator: " + operator);
+        };
+    }
+
     private static BooleanExpression handleComparisonOperators(
             PathBuilder<?> entityPath, String fieldName, Object value, Operator operator) {
         if (!(value instanceof Comparable)) {
@@ -73,15 +82,6 @@ public class ExpressionBuilder {
                     entityPath, fieldName, temporalValue, operator);
             default -> throw new IllegalArgumentException("Comparison operators are not supported for the type of "
                     + fieldName + ": " + value.getClass().getSimpleName());
-        };
-    }
-
-    private static BooleanExpression handleCollectionOperators(
-            PathBuilder<?> entityPath, String fieldName, List<?> value, Operator operator) {
-        return switch (operator) {
-            case IN -> entityPath.get(fieldName).in(value);
-            case NOT_IN -> entityPath.get(fieldName).notIn(value);
-            default -> throw new IllegalStateException("Unexpected collection operator: " + operator);
         };
     }
 
