@@ -1,4 +1,4 @@
-package dev.pablolec.querybuilder;
+package dev.pablolec.querybuilder.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

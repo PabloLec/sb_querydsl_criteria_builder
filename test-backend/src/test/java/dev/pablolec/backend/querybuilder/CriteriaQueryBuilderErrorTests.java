@@ -3,7 +3,7 @@ package dev.pablolec.backend.querybuilder;
 import dev.pablolec.backend.AbstractIntegrationTest;
 import dev.pablolec.backend.db.model.Library;
 import dev.pablolec.querybuilder.CriteriaQueryBuilder;
-import dev.pablolec.querybuilder.SearchCriterion;
+import dev.pablolec.querybuilder.model.SearchCriterion;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,7 +132,7 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
     @Test
     void testUnsupportedSubQueryOperator() {
         SearchCriterion subCriterion = new SearchCriterion("title", "eq", "Java Basics");
-        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "unsupportedSubQueryOperator", List.of(subCriterion)));
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "in", List.of(subCriterion)));
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
@@ -144,8 +144,21 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void testInvalidCollectionValues() {
+    void testInvalidCollectionOperator() {
         List<SearchCriterion> criteria = List.of(new SearchCriterion("libraryId", "notACollectionOperator", "[test1,test2]"));
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        });
+
+        String expectedMessage = "Unsupported operator";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void testInvalidCollectionValues() {
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("libraryId", "in", "[test1,test2]"));
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();

@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
+import dev.pablolec.querybuilder.model.SearchCriterion;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
@@ -23,36 +24,35 @@ public class CriteriaQueryBuilder {
         EntityPathBase<T> rootEntityPath = (EntityPathBase<T>) entityPathResolver.getEntityPathBase(targetClass);
         JPAQuery<T> query = (JPAQuery<T>) new JPAQuery<>(entityManager).from(rootEntityPath);
 
-        return (JPAQuery<T>) buildQuery(criteria, rootEntityPath, query);
+        return (JPAQuery<T>) addCriteriaToQuery(criteria, rootEntityPath, query);
     }
 
     public JPAQuery<?> buildQuery(List<SearchCriterion> criteria, String entityPathString) {
         EntityPathBase<?> rootEntityPath = entityPathResolver.getEntityPathBase(entityPathString);
         JPAQuery<?> query = new JPAQuery<>(entityManager).from(rootEntityPath);
 
-        return buildQuery(criteria, rootEntityPath, query);
+        return addCriteriaToQuery(criteria, rootEntityPath, query);
     }
 
-    private JPAQuery<?> buildQuery(List<SearchCriterion> criteria, EntityPathBase<?> rootEntityPath, JPAQuery<?> query) {
+    private JPAQuery<?> addCriteriaToQuery(List<SearchCriterion> criteria, EntityPathBase<?> rootEntityPath, JPAQuery<?> query) {
         criteria.stream()
-                .map(criterion -> buildExpression(criterion, rootEntityPath))
+                .map(criterion -> getBooleanExpression(criterion, rootEntityPath))
                 .forEach(query::where);
 
         return query;
     }
 
-    private BooleanExpression buildExpression(SearchCriterion criterion, EntityPathBase<?> currentEntityPath) {
+    private BooleanExpression getBooleanExpression(SearchCriterion criterion, EntityPathBase<?> rootEntityPath) {
         if (criterion.isSubQuery()) {
             validateSubQueryCriteria(criterion.getSubCriteria());
 
+            JPAQuery<?> subQuery = buildSubQuery(rootEntityPath, criterion.getField());
             EntityPathBase<?> childEntityPath = entityPathResolver.getEntityPathBase(getFieldPathParts(criterion.getField()).getLast());
-            JPAQuery<?> subQuery = buildSubQuery(currentEntityPath, criterion.getField());
-            buildQuery(criterion.getSubCriteria(), childEntityPath, subQuery);
+            addCriteriaToQuery(criterion.getSubCriteria(), childEntityPath, subQuery);
 
             return ExpressionBuilder.buildSubQueryExpression(criterion, subQuery);
         } else {
-            PathBuilder<?> pathBuilder = new PathBuilder<>(currentEntityPath.getType(), currentEntityPath.getMetadata().getName());
-            return ExpressionBuilder.buildExpression(pathBuilder, criterion);
+            return ExpressionBuilder.buildExpression(criterion, rootEntityPath);
         }
     }
 

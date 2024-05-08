@@ -3,7 +3,7 @@ package dev.pablolec.backend.querybuilder;
 import dev.pablolec.backend.AbstractIntegrationTest;
 import dev.pablolec.backend.db.model.*;
 import dev.pablolec.querybuilder.CriteriaQueryBuilder;
-import dev.pablolec.querybuilder.SearchCriterion;
+import dev.pablolec.querybuilder.model.SearchCriterion;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -570,7 +570,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                 .language("Spanish")
                 .genre("Research")
                 .library(library)
-                .createdAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now().minusDays(30))
                 .updatedAt(LocalDateTime.now())
                 .build();
 
@@ -586,6 +586,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
 
         SearchCriterion bookTitleCriterion = new SearchCriterion("book.title", "like", "%Research%");
         SearchCriterion bookYearCriterion = new SearchCriterion("book.publishYear", "gte", "2010");
+        SearchCriterion bookCreationDateCriterion = new SearchCriterion("book.createdAt", "lte", LocalDateTime.now().toString());
         SearchCriterion bookLanguageCriterion = new SearchCriterion("book.language", "in", List.of("English", "Spanish").toString());
         List<SearchCriterion> borrowedBookCriteria = List.of(bookTitleCriterion, bookYearCriterion, bookLanguageCriterion);
 
