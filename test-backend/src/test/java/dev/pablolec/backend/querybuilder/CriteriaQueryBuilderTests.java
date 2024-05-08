@@ -4,6 +4,7 @@ import dev.pablolec.backend.AbstractIntegrationTest;
 import dev.pablolec.backend.db.model.*;
 import dev.pablolec.querybuilder.CriteriaQueryBuilder;
 import dev.pablolec.querybuilder.model.SearchCriterion;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -246,7 +247,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void testLibraryByEstablishedDateLowerThanOrEqualTo() {
+    void testLibraryByEstablishedDateGreaterThanOrEqualTo() {
         Library library = Library.builder()
                 .name("Night Library")
                 .location("Central City")
@@ -260,7 +261,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         libraryRepository.save(library);
 
         List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("establishedDate", "lte", LocalDate.of(2010, 1, 1).toString())
+                new SearchCriterion("establishedDate", "gte", LocalDate.of(1999, 12, 31).toString())
         );
 
         List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
@@ -269,26 +270,27 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     }
 
     @Test
-    void testLibraryByEstablishedDateGreaterThanOrEqualTo() {
-        Library library = Library.builder()
-                .name("Modern Library")
-                .location("New Town")
-                .openingHours("09:00-19:00")
-                .establishedDate(LocalDate.of(2010, 1, 1))
-                .website("http://modernlibrary.com")
-                .email("contact@modernlibrary.com")
-                .phoneNumber("1234567890")
-                .isOpen(true)
+    void testBookByCreationDateLowerThanOrEqualTo() {
+        Book book = Book.builder()
+                .title("Book of Secrets")
+                .isbn("123456789")
+                .publishYear(2021)
+                .edition("First")
+                .language("English")
+                .genre("Mystery")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
-        libraryRepository.save(library);
+
+        bookRepository.save(book);
+        bookRepository.saveAndFlush(book);
 
         List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("establishedDate", "gte", LocalDate.of(2010, 1, 1).toString())
+                new SearchCriterion("createdAt", "lte", LocalDateTime.now().plusDays(1).minusHours(1).toString())
         );
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Book> result = criteriaQueryBuilder.buildQuery(criteria, Book.class).fetch();
         assertEquals(1, result.size());
-        assertEquals("Modern Library", result.getFirst().getName());
     }
 
     @Test
@@ -547,8 +549,6 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                 .language("English")
                 .genre("Research")
                 .library(library)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
 
         bookRepository.save(book);
@@ -570,8 +570,6 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                 .language("Spanish")
                 .genre("Research")
                 .library(library)
-                .createdAt(LocalDateTime.now().minusDays(30))
-                .updatedAt(LocalDateTime.now())
                 .build();
 
         bookRepository.save(bookWithoutUser);
@@ -586,7 +584,6 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
 
         SearchCriterion bookTitleCriterion = new SearchCriterion("book.title", "like", "%Research%");
         SearchCriterion bookYearCriterion = new SearchCriterion("book.publishYear", "gte", "2010");
-        SearchCriterion bookCreationDateCriterion = new SearchCriterion("book.createdAt", "lte", LocalDateTime.now().toString());
         SearchCriterion bookLanguageCriterion = new SearchCriterion("book.language", "in", List.of("English", "Spanish").toString());
         List<SearchCriterion> borrowedBookCriteria = List.of(bookTitleCriterion, bookYearCriterion, bookLanguageCriterion);
 
