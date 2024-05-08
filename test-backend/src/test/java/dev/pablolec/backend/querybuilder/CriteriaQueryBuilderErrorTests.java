@@ -79,7 +79,7 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
             criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         });
 
-        String expectedMessage = "Invalid date format";
+        String expectedMessage = "Failed to parse LocalDate from value";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
@@ -124,7 +124,7 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
             criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         });
 
-        String expectedMessage = "Unsupported field type for dynamic casting";
+        String expectedMessage = "Comparison operators are not supported for the type of";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }

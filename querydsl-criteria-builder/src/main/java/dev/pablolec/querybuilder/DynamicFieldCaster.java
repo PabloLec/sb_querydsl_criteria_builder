@@ -1,8 +1,10 @@
 package dev.pablolec.querybuilder;
 
+import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
 import java.lang.reflect.Field;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
@@ -12,25 +14,8 @@ import lombok.experimental.UtilityClass;
 class DynamicFieldCaster {
     public static Object castValue(Class<?> entityClass, String fieldName, String value, boolean isCollection) {
         try {
-            Class<?> currentType = entityClass;
-            Field field = null;
-
-            String[] fieldParts = fieldName.split("\\.");
-            for (String part : fieldParts) {
-                field = getField(currentType, part);
-                currentType = field.getType();
-            }
-
-            if (field == null) {
-                throw new IllegalArgumentException("Field not found in the given path: " + fieldName);
-            }
-
-            if (isCollection) {
-                Class<?> fieldType = field.getType();
-                return castCollection(fieldType, value);
-            } else {
-                return castSingleValue(currentType, value);
-            }
+            Class<?> fieldType = resolveFieldType(entityClass, fieldName);
+            return isCollection ? castCollection(fieldType, value) : castSingleValue(fieldType, value);
         } catch (NoSuchFieldException e) {
             throw new IllegalArgumentException("Field not found in the given path: " + fieldName, e);
         } catch (DateTimeParseException e) {
@@ -38,6 +23,15 @@ class DynamicFieldCaster {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid number format: " + value + " on field: " + fieldName, e);
         }
+    }
+
+    private static Class<?> resolveFieldType(Class<?> entityClass, String fieldName) throws NoSuchFieldException {
+        Class<?> currentType = entityClass;
+        for (String part : Arrays.stream(fieldName.split("\\.")).toList()) {
+            Field field = getField(currentType, part);
+            currentType = field.getType();
+        }
+        return currentType;
     }
 
     private static Field getField(Class<?> type, String fieldName) throws NoSuchFieldException {
@@ -53,16 +47,46 @@ class DynamicFieldCaster {
     }
 
     private static Object castSingleValue(Class<?> fieldType, String value) {
-        String typeName = fieldType.getCanonicalName();
-        return switch (typeName) {
-            case "java.lang.Integer", "int" -> Integer.parseInt(value);
-            case "java.lang.Long", "long" -> Long.parseLong(value);
-            case "java.time.LocalDate" -> LocalDate.parse(value);
-            case "java.time.LocalDateTime" -> LocalDateTime.parse(value);
-            case "java.lang.String" -> value;
-            default -> throw new IllegalArgumentException(
+        if (String.class.equals(fieldType)) {
+            return value;
+        }
+        return castWithFallback(fieldType, value);
+    }
+
+    private static Object castWithFallback(Class<?> fieldType, String value) {
+        try {
+            return parseWithReflection(fieldType, value);
+        } catch (NoSuchMethodException e) {
+            return castWithPropertyEditor(fieldType, value);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalArgumentException(
+                    "Failed to parse " + fieldType.getSimpleName() + " from value: " + value, e);
+        }
+    }
+
+    private static Object parseWithReflection(Class<?> fieldType, String value)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Method parseMethod = fieldType.getMethod("parse", CharSequence.class);
+        return parseMethod.invoke(null, value);
+    }
+
+    private static Object castWithPropertyEditor(Class<?> fieldType, String value) {
+        PropertyEditor editor = PropertyEditorManager.findEditor(fieldType);
+        if (editor == null) {
+            throw new IllegalArgumentException(
                     "Unsupported field type for dynamic casting: " + fieldType.getSimpleName());
-        };
+        }
+        editor.setAsText(value);
+        return getValueFromPropertyEditor(editor, fieldType, value);
+    }
+
+    private static Object getValueFromPropertyEditor(PropertyEditor editor, Class<?> fieldType, String value) {
+        try {
+            return editor.getValue();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                    "Failed to convert String to " + fieldType.getSimpleName() + ": " + value, e);
+        }
     }
 
     private static List<?> castCollection(Class<?> fieldType, String value) {
