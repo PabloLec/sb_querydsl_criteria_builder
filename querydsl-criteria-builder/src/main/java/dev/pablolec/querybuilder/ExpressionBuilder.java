@@ -18,18 +18,11 @@ public class ExpressionBuilder {
                 pathBuilder.getType(), criterion.getField(), criterion.getValue(), operator.isCollectionOperator());
 
         return switch (operator) {
-            case EQ, NE -> handleBasicComparisons(pathBuilder, criterion.getField(), castedValue, operator);
-            case LIKE, NOT_LIKE -> {
-                if (!(castedValue instanceof String)) {
-                    throw new IllegalArgumentException(operator + " operator is only valid for String types.");
-                }
-                yield operator == Operator.LIKE
-                        ? pathBuilder.getString(criterion.getField()).like((String) castedValue)
-                        : pathBuilder.getString(criterion.getField()).notLike((String) castedValue);
-            }
+            case EQ, NE -> handleEqualityOperators(pathBuilder, criterion.getField(), castedValue, operator);
+            case LIKE, NOT_LIKE -> handleLikeOperators(pathBuilder, criterion.getField(), castedValue, operator);
             case GT, LT, GTE, LTE -> handleComparisonOperators(
                     pathBuilder, criterion.getField(), castedValue, operator);
-            case IN, NOT_IN -> handleCollectionExpression(
+            case IN, NOT_IN -> handleCollectionOperators(
                     pathBuilder, criterion.getField(), (List<?>) castedValue, operator);
             default -> throw new IllegalArgumentException("Unsupported operator: " + operator);
         };
@@ -44,12 +37,26 @@ public class ExpressionBuilder {
         };
     }
 
-    private static BooleanExpression handleBasicComparisons(
+    private static BooleanExpression handleEqualityOperators(
             PathBuilder<?> entityPath, String fieldName, Object value, Operator operator) {
         return switch (operator) {
             case EQ -> entityPath.get(fieldName).eq(value);
             case NE -> entityPath.get(fieldName).ne(value);
-            default -> throw new IllegalStateException("Unexpected operator for basic comparisons: " + operator);
+            default -> throw new IllegalStateException("Unexpected equality operator: " + operator);
+        };
+    }
+
+    private static BooleanExpression handleLikeOperators(
+            PathBuilder<?> entityPath, String fieldName, Object value, Operator operator) {
+        if (!(value instanceof String)) {
+            throw new IllegalArgumentException(operator + " operator only supports String values. Field: " + fieldName
+                    + ", Value type: " + value.getClass().getSimpleName());
+        }
+
+        return switch (operator) {
+            case LIKE -> entityPath.getString(fieldName).like((String) value);
+            case NOT_LIKE -> entityPath.getString(fieldName).notLike((String) value);
+            default -> throw new IllegalStateException("Unexpected LIKE operator: " + operator);
         };
     }
 
@@ -69,7 +76,7 @@ public class ExpressionBuilder {
         };
     }
 
-    private static BooleanExpression handleCollectionExpression(
+    private static BooleanExpression handleCollectionOperators(
             PathBuilder<?> entityPath, String fieldName, List<?> value, Operator operator) {
         return switch (operator) {
             case IN -> entityPath.get(fieldName).in(value);

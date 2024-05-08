@@ -390,7 +390,7 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         SearchCriterion bookGenreSubQuery = new SearchCriterion("book", "exists", List.of(genreCriterion));
 
         List<SearchCriterion> criteria = Arrays.asList(
-                new SearchCriterion("name", "like", "%Research Library%"),
+                new SearchCriterion("name", "like", "%research Library%"),
                 new SearchCriterion("location", "eq", "Research Blvd"),
                 new SearchCriterion("establishedDate", "gte", LocalDate.of(1950, 1, 1).toString()),
                 bookSubQuery,
