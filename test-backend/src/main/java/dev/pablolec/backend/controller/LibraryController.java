@@ -6,6 +6,7 @@ import dev.pablolec.querybuilder.CriteriaQueryBuilder;
 import dev.pablolec.querybuilder.model.SearchCriterion;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,9 @@ public class LibraryController {
     private final MockDataService mockDataService;
 
     @PostMapping("/query")
+    @Cacheable("libraries")
     public List<Library> getLibrariesByQuery(@RequestBody List<SearchCriterion> query) {
+        log.info("Received query: {}", query);
         return criteriaQueryBuilder.buildQuery(query, Library.class).fetch();
     }
 
