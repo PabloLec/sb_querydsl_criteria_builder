@@ -1,24 +1,29 @@
 <template>
-  <select :value="modelValue" @change="handleChange">
-    <option disabled value="">Select a field</option>
-    <option v-for="(config, field) in fieldsConfiguration" :key="field" :value="field">
-      {{ field }}
-    </option>
-  </select>
+  <Select @update:modelValue="handleChange">
+    <SelectTrigger class="w-[180px]">
+      <SelectValue placeholder="Field" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem v-for="(config, field) in fieldsConfiguration" :key="field" :value="field">
+        {{ field }}
+      </SelectItem>
+    </SelectContent>
+  </Select>
 </template>
 
 <script lang="ts" setup>
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import {fieldsConfiguration} from '@/lib/fieldsConfiguration';
-
-const props = defineProps({
-  modelValue: String
-});
 
 const emit = defineEmits(['update:modelValue', 'change']);
 
-const handleChange = (event: Event) => {
-  const target = event.target as HTMLSelectElement;
-  emit('update:modelValue', target.value);
-  emit('change');
+const handleChange = (value: string) => {
+  emit('update:modelValue', value);
 };
 </script>

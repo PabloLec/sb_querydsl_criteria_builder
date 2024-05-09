@@ -1,19 +1,23 @@
 <template>
   <div>
     <div v-for="(criterion, index) in criteria" :key="index">
-      <field-selector v-model="criterion.field" @change="() => updateFieldConfig(criterion)"/>
-      <operation-selector v-if="hasOperations(criterion.field)" v-model="criterion.op" :field="criterion.field"/>
-      <value-input v-if="hasValueInput(criterion.field)" v-model="criterion.value" :field="criterion.field"/>
-      <button @click="removeCriterion(index)">Remove</button>
-      <button v-if="canHaveSubCriteria(criterion.field)" @click="() => addSubCriterion(criterion)">Add Sub-Criterion
+      <div class="flex items-center space-x-4">
+        <field-selector v-model="criterion.field" @change="() => updateFieldConfig(criterion)" />
+        <operation-selector v-if="hasOperations(criterion.field)" v-model="criterion.op" :field="criterion.field" />
+        <value-input v-if="hasValueInput(criterion.field)" v-model="criterion.value" :field="criterion.field" />
+        <button @click="removeCriterion(index)" class="mt-2">Remove</button>
+      </div>
+      <button v-if="canHaveSubCriteria(criterion.field)" @click="() => addSubCriterion(criterion)" class="mt-2 ml-2">
+        Add Sub-Criterion
       </button>
-      <div v-if="hasSubCriteria(criterion)" style="margin-left: 20px;">
+      <div v-if="hasSubCriteria(criterion)" class="mt-2 ml-6">
         <search-form :criteria="criterion.subCriteria"/>
       </div>
     </div>
-    <button @click="addCriterion">Add Criterion</button>
+    <button @click="addCriterion" class="mt-4">Add Criterion</button>
   </div>
 </template>
+
 
 <script lang="ts" setup>
 import {SearchCriterion} from '@/lib/types';

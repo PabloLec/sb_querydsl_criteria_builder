@@ -1,13 +1,26 @@
 <template>
-  <input v-if="isInput" :value="modelValue" type="text" @input="handleInput"/>
-  <select v-if="isSelect" :value="modelValue" @change="handleChange">
-    <option v-for="value in valueOptions" :key="value" :value="value">
-      {{ value }}
-    </option>
-  </select>
+  <Input v-if="isInput"  type="text" placeholder="Value" @update:modelValue="handleChange"/>
+  <Select v-if="isSelect" @update:modelValue="handleChange">
+    <SelectTrigger class="w-[180px]">
+      <SelectValue placeholder="Value" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem v-for="value in valueOptions" :key="value" :value="value">
+        {{ value }}
+      </SelectItem>
+    </SelectContent>
+  </Select>
 </template>
 
 <script lang="ts" setup>
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
 import {computed} from 'vue';
 import {fieldsConfiguration} from '@/lib/fieldsConfiguration';
 
@@ -20,14 +33,9 @@ const emit = defineEmits(['update:modelValue']);
 
 const isInput = computed(() => fieldsConfiguration[props.field]?.valueComponent === 'input');
 const isSelect = computed(() => fieldsConfiguration[props.field]?.valueComponent === 'select');
-const valueOptions = computed(() => fieldsConfiguration[props.field]?.valueOptions || []);
+const valueOptions = computed(() => fieldsConfiguration[props.field]?.valueOptions ?? []);
 
-const handleInput = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  emit('update:modelValue', target.value);
-};
-const handleChange = (event: Event) => {
-  const target = event.target as HTMLSelectElement;
-  emit('update:modelValue', target.value);
+const handleChange = (value: string) => {
+  emit('update:modelValue', value);
 };
 </script>
