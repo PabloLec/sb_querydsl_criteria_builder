@@ -82,8 +82,10 @@ const formatCriteria = (criteria: SearchCriterion[]): SearchCriterion[] => {
             criterion.value = criterion.value.toString();
         }
 
-        if (criterion.op?.toLowerCase().includes('like')) {
+        if (["like", "notLike"].includes(criterion.op?.toLowerCase())) {
             formatLikeCriterion(criterion);
+        } else if (["in", "notIn"].includes(criterion.op?.toLowerCase())) {
+            formatCollectionCriterion(criterion);
         }
 
         if (criterion.subQuery) {
@@ -98,5 +100,20 @@ const formatLikeCriterion = (criterion: SearchCriterion): SearchCriterion => {
     if (criterion.value && !criterion.value.includes('%')) {
         criterion.value = `%${criterion.value}%`;
     }
+    return criterion;
+}
+
+const formatCollectionCriterion = (criterion: SearchCriterion): SearchCriterion => {
+    const regex = /[\p{L}\p{N}\-.]+/gu;
+
+    if (criterion.value) {
+        const matches = criterion.value.match(regex);
+        if (matches && matches.length > 0) {
+            criterion.value = `[${matches.join(", ")}]`;
+        } else {
+            criterion.value = "[]";
+        }
+    }
+
     return criterion;
 }
