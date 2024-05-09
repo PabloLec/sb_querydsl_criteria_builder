@@ -97,14 +97,14 @@ const bookFieldsConfiguration: Record<string, FieldConfig> = {
     },
     language: {
         label: "Language",
-        fieldType: 'string',
+        fieldType: 'enum',
         valueComponent: 'select',
         valueOptions: ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Russian', 'Chinese', 'Japanese', 'Korean'],
         isFieldWithSubCriteria: false
     },
     genre: {
         label: "Genre",
-        fieldType: 'string',
+        fieldType: 'enum',
         valueComponent: 'select',
         valueOptions: ['Fiction', 'Non-Fiction', 'Fantasy', 'Science Fiction', 'Mystery', 'Horror', 'Romance', 'Biography', 'History', 'Science', 'Self-Help', 'Cooking', 'Travel', 'Art', 'Religion', 'Philosophy', 'Sports', 'Music', 'Technology', 'Business', 'Finance', 'Politics', 'Education', 'Children', 'Teen', 'Young Adult'],
         isFieldWithSubCriteria: false

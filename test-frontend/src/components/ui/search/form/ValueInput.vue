@@ -1,6 +1,6 @@
 <template>
-  <Input v-if="isInput" type="text" placeholder="Value" @update:modelValue="handleChange" class="w-full"/>
-  <Select v-if="isSelect" @update:modelValue="handleChange">
+  <Input v-if="isInput" :modelValue="modelValue" type="text" placeholder="Value" @update:modelValue="handleChange" class="w-full"/>
+  <Select v-if="isSelect" :modelValue="modelValue" @update:modelValue="handleChange">
     <SelectTrigger class="w-[180px]">
       <SelectValue placeholder="Value" />
     </SelectTrigger>
