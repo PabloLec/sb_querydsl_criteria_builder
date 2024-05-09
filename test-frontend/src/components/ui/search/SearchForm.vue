@@ -1,16 +1,25 @@
 <template>
   <div>
-    <div v-for="(criterion, index) in criteria" :key="index">
-      <div class="flex items-center justify-between space-x-4 my-2">
+    <div v-for="(criterion, index) in criteria" :key="index" class="w-full">
+      <div class="flex items-center space-x-4 my-2 w-full">
         <div class="flex flex-grow items-center space-x-4">
-          <field-selector v-model="criterion.field" @change="() => updateFieldConfig(criterion)" :parent-field="parentField" />
-          <operation-selector v-if="hasOperations(criterion.field)" v-model="criterion.op" :field="criterion.field" :parent-field="parentField" />
-          <value-input v-if="hasValueInput(criterion.field)" v-model="criterion.value" :field="criterion.field" :parent-field="parentField" />
+          <div class="flex-none">
+            <field-selector v-model="criterion.field" @change="() => updateFieldConfig(criterion)" :parent-field="parentField" />
+          </div>
+          <div class="flex-none">
+            <operation-selector v-if="criterion.field" v-model="criterion.op" :field="criterion.field" :parent-field="parentField" />
+          </div>
+          <div class="flex-grow"> <!-- Prend tout l'espace restant -->
+            <value-input v-if="hasValueInput(criterion.field)" v-model="criterion.value" :field="criterion.field" :parent-field="parentField" />
+          </div>
         </div>
-        <Button variant="ghost" size="icon" @click="removeCriterion(index)" class=" hover:text-destructive flex-shrink-0 w-10 h-10">
+
+        <Button variant="ghost" size="icon" @click="removeCriterion(index)" class="hover:text-destructive flex-shrink-0 w-10 h-10">
           <CircleMinus class="w-4 h-4 flex-shrink-0" />
         </Button>
       </div>
+
+
       <div v-if="hasSubCriteria(criterion)" class="my-2 ml-6 relative">
         <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-gray-400" style="margin-left: -1rem;"></div>
         <search-form :criteria="criterion.subCriteria" :parent-field="criterion.field" :is-root="false"/>
@@ -92,7 +101,6 @@ const search = async () => {
 
 const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField]);
 
-const hasOperations = (field: string) => field && currentFieldsConfig.value[field]?.opOptions.length > 0;
 const hasValueInput = (field: string) => field && currentFieldsConfig.value[field]?.valueComponent;
 const canHaveSubCriteria = (field: string) => field && currentFieldsConfig.value[field]?.canHaveSubCriteria;
 const hasSubCriteria = (criterion: SearchCriterion) => criterion.subCriteria && criterion.field && currentFieldsConfig.value[criterion.field]?.canHaveSubCriteria;

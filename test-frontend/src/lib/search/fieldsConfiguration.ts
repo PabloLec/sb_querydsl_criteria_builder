@@ -2,55 +2,64 @@ import { FieldConfig } from './types.ts';
 
 const libraryFieldsConfiguration: Record<string, FieldConfig> = {
     name: {
-        opOptions: ['equals', 'like'],
+        label: "Name",
+        fieldType: 'string',
         valueComponent: 'input',
         canHaveSubCriteria: false
     },
     year: {
-        opOptions: ['equals', 'greater than', 'less than'],
+        label: "Year",
+        fieldType: 'number',
         valueComponent: 'input',
         canHaveSubCriteria: false
     },
     book: {
-        opOptions: [],
+        label: "Book",
+        fieldType: 'subquery',
         valueComponent: 'none',
         canHaveSubCriteria: true
     },
     author: {
-        opOptions: ['equals', 'not equals'],
+        label: "Author",
+        fieldType: 'enum',
         valueComponent: 'select',
         valueOptions: ['Author 1', 'Author 2', 'Author 3'],
         canHaveSubCriteria: false
     },
     isOpen: {
-        opOptions: ['is'],
+        label: "Is Open",
+        fieldType: 'boolean',
         valueComponent: 'select',
-        valueOptions: ['Open', 'Closed'],
+        valueOptions: ['0', '1'],
         canHaveSubCriteria: false
     }
 };
 
 const bookFieldsConfiguration: Record<string, FieldConfig> = {
     author: {
-        opOptions: ['equals', 'not equals'],
+        label: "Author",
+        fieldType: 'enum',
         valueComponent: 'select',
         valueOptions: ['Author 1', 'Author 2', 'Author 3', 'Author 4'],
         canHaveSubCriteria: false
     },
     genre: {
-        opOptions: ['equals'],
+        label: "Genre",
+        fieldType: 'enum',
         valueComponent: 'select',
         valueOptions: ['Fiction', 'Non-Fiction', 'Educational'],
         canHaveSubCriteria: false
     },
     language: {
-        opOptions: ['equals'],
+        label: "Language",
+        fieldType: 'enum',
         valueComponent: 'select',
         valueOptions: ['English', 'French', 'Spanish'],
         canHaveSubCriteria: false
     },
     book: {
-        opOptions: [],
+        label: "Book",
+        fieldType: 'subquery',
         valueComponent: 'none',
         canHaveSubCriteria: true
     },

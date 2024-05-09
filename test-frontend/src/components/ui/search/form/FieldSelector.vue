@@ -5,7 +5,7 @@
     </SelectTrigger>
     <SelectContent>
       <SelectItem v-for="(config, field) in currentFieldsConfig" :key="field" :value="field">
-        {{ field }}
+        {{ config.label }}
       </SelectItem>
     </SelectContent>
   </Select>

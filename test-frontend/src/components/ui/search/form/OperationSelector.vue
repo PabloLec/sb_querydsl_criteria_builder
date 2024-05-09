@@ -1,11 +1,11 @@
 <template>
   <Select @update:modelValue="handleChange">
     <SelectTrigger class="w-[180px]">
-      <SelectValue placeholder="op" />
+      <SelectValue placeholder="Select operation" />
     </SelectTrigger>
     <SelectContent>
-      <SelectItem v-for="op in currentFieldsConfig[field]?.opOptions" :key="op" :value="op">
-        {{ op }}
+      <SelectItem v-for="operator in operators" :key="operator.op" :value="operator.op">
+        {{ operator.label }}
       </SelectItem>
     </SelectContent>
   </Select>
@@ -20,7 +20,8 @@ import {
   SelectValue,
 } from '@/components/ui/shadcn/select';
 import { computed } from 'vue';
-import { fieldsConfiguration } from '@/lib/search/fieldsConfiguration.ts';
+import { fieldsConfiguration } from '@/lib/search/fieldsConfiguration';
+import { fieldTypeToOperators } from '@/lib/search/operators';
 
 const props = defineProps({
   field: String,
@@ -29,7 +30,11 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'change']);
 
-const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField]);
+// Fetching the field configuration based on the parent field context
+const fieldConfig = computed(() => fieldsConfiguration[props.parentField][props.field]);
+
+// Deriving the operators based on the field type of the current field
+const operators = computed(() => fieldTypeToOperators[fieldConfig.value.fieldType] || []);
 
 const handleChange = (value: string) => {
   emit('update:modelValue', value);

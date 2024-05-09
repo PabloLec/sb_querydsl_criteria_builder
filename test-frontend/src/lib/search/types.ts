@@ -1,8 +1,14 @@
 export interface FieldConfig {
-    opOptions: string[];
+    label: string;
+    fieldType: 'string' | 'number' | 'date' | 'datetime' | 'subquery';
     valueComponent: 'input' | 'select' | 'none';
     canHaveSubCriteria: boolean;
     valueOptions?: string[];
+}
+
+export interface Operator {
+    op: string;
+    label: string;
 }
 
 export interface SearchCriterion {
