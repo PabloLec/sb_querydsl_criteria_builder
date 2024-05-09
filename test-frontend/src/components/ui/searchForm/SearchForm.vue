@@ -14,7 +14,7 @@
       <div v-if="hasSubCriteria(criterion)" class="my-2 ml-6 relative">
         <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-gray-400" style="margin-left: -1rem;"></div>
         <search-form :criteria="criterion.subCriteria" :parent-field="criterion.field" :is-root="false"/>
-        <Button v-if="canHaveSubCriteria(criterion.field)" @click="() => addSubCriterion(criterion)" class="bg-emerald-600 flex-shrink-0 w-10 h-10">
+        <Button v-if="canHaveSubCriteria(criterion.field)" @click="() => addSubCriterion(criterion)" class="bg-emerald-400 flex-shrink-0 w-10 h-10">
           <Plus class="w-4 h-4 flex-shrink-0" />
         </Button>
       </div>
@@ -22,18 +22,24 @@
     <Button v-if="isRoot" size="icon" @click="addCriterion" class="bg-emerald-400 flex-shrink-0 w-10 h-10">
       <Plus class="w-4 h-4 flex-shrink-0" />
     </Button>
+    <div class="flex justify-end mt-4">
+      <Button v-if="isRoot" @click="search" class="bg-blue-400 flex-shrink-0 mr-6">
+        Search
+      </Button>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { SearchCriterion } from '@/lib/types';
-import { fieldsConfiguration } from '@/lib/fieldsConfiguration';
+import {ref, computed} from 'vue';
+import {SearchCriterion} from '@/lib/types';
+import {fieldsConfiguration} from '@/lib/fieldsConfiguration';
+import {getLibrariesByQuery} from '@/lib/api';
 import FieldSelector from './FieldSelector.vue';
 import OperationSelector from './OperationSelector.vue';
 import ValueInput from './ValueInput.vue';
-import { Minus, Plus } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
-import {computed} from "vue";
+import {Minus, Plus} from 'lucide-vue-next';
+import {Button} from '@/components/ui/button';
 
 const props = defineProps({
   criteria: Array as PropType<SearchCriterion[]>,
@@ -44,7 +50,9 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:criteria']);
+const searchResults = ref<Library[]>([]);
+
+const emit = defineEmits(['update:criteria', 'update:results']);
 
 const addCriterion = () => {
   props.criteria.push({ field: '', op: '', value: '', subCriteria: [] });
@@ -69,6 +77,16 @@ const updateFieldConfig = (criterion: SearchCriterion) => {
   criterion.value = '';
   emit('update:criteria', props.criteria);
 };
+
+const search = async () => {
+  try {
+    searchResults.value = await getLibrariesByQuery(props.criteria);
+    emit('update:results', searchResults.value);
+  } catch (error) {
+    console.error('Search failed', error);
+  }
+};
+
 
 const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField]);
 

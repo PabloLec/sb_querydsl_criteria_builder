@@ -1,3 +1,10 @@
+export interface FieldConfig {
+    opOptions: string[];
+    valueComponent: 'input' | 'select' | 'none';
+    canHaveSubCriteria: boolean;
+    valueOptions?: string[];
+}
+
 export interface SearchCriterion {
     field?: string;
     op?: string;
@@ -6,9 +13,14 @@ export interface SearchCriterion {
     subCriteria?: SearchCriterion[];
 }
 
-export interface FieldConfig {
-    opOptions: string[];
-    valueComponent: 'input' | 'select' | 'none';
-    canHaveSubCriteria: boolean;
-    valueOptions?: string[];
+export interface Library {
+    libraryId?: number;
+    name?: string;
+    location?: string;
+    openingHours?: string;
+    establishedDate?: string;
+    website?: string;
+    email?: string;
+    phoneNumber?: string;
+    isOpen?: boolean;
 }

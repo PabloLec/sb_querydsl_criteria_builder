@@ -2,7 +2,7 @@ import { FieldConfig } from './types';
 
 const libraryFieldsConfiguration: Record<string, FieldConfig> = {
     name: {
-        opOptions: ['equals', 'contains'],
+        opOptions: ['equals', 'like'],
         valueComponent: 'input',
         canHaveSubCriteria: false
     },
