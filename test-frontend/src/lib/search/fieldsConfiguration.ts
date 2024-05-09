@@ -28,7 +28,7 @@ const libraryFieldsConfiguration: Record<string, FieldConfig> = {
     establishedDate: {
         label: "Established Date",
         fieldType: 'date',
-        valueComponent: 'input',
+        valueComponent: 'date',
         isFieldWithSubCriteria: false
     },
     website: {

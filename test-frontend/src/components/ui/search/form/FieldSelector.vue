@@ -31,7 +31,6 @@ const emit = defineEmits(['update:modelValue', 'change']);
 const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField]);
 
 const handleChange = (value: string | number) => {
-  console.log("Value changed to:", value);
   emit('update:modelValue', value);
 };
 
