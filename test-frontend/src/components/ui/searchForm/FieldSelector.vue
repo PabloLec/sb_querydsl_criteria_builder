@@ -4,7 +4,7 @@
       <SelectValue placeholder="Field" />
     </SelectTrigger>
     <SelectContent>
-      <SelectItem v-for="(config, field) in fieldsConfiguration" :key="field" :value="field">
+      <SelectItem v-for="(config, field) in currentFieldsConfig" :key="field" :value="field">
         {{ field }}
       </SelectItem>
     </SelectContent>
@@ -18,10 +18,17 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import {fieldsConfiguration} from '@/lib/fieldsConfiguration';
+} from '@/components/ui/select';
+import { computed } from 'vue';
+import { fieldsConfiguration } from '@/lib/fieldsConfiguration';
+
+const props = defineProps({
+  parentField: String
+});
 
 const emit = defineEmits(['update:modelValue', 'change']);
+
+const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField]);
 
 const handleChange = (value: string) => {
   emit('update:modelValue', value);
