@@ -30,10 +30,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'change']);
 
-// Fetching the field configuration based on the parent field context
 const fieldConfig = computed(() => fieldsConfiguration[props.parentField][props.field]);
 
-// Deriving the operators based on the field type of the current field
 const operators = computed(() => fieldTypeToOperators[fieldConfig.value.fieldType] || []);
 
 const handleChange = (value: string) => {

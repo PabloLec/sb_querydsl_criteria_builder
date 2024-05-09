@@ -2,7 +2,7 @@ export interface FieldConfig {
     label: string;
     fieldType: 'string' | 'number' | 'date' | 'datetime' | 'subquery';
     valueComponent: 'input' | 'select' | 'none';
-    canHaveSubCriteria: boolean;
+    isFieldWithSubCriteria: boolean;
     valueOptions?: string[];
 }
 

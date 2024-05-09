@@ -23,10 +23,7 @@ export async function getLibrariesByQuery(query: SearchCriterion[]): Promise<Lib
 }
 
 function formatCriteria(criteria: SearchCriterion[]): SearchCriterion[] {
-    return criteria.filter(criterion => {
-        return criterion.field && criterion.op &&
-            (criterion.subQuery !== true || (criterion.subCriteria && criterion.subCriteria.length > 0));
-    }).map(criterion => {
+    return criteria.map(criterion => {
         const formattedCriterion: SearchCriterion = {
             field: criterion.field,
             op: criterion.op,
@@ -34,17 +31,28 @@ function formatCriteria(criteria: SearchCriterion[]): SearchCriterion[] {
             value: criterion.value?.toString()
         };
 
-        if (criterion.op.toLowerCase().includes('like')) {
+        if (criterion.op?.toLowerCase().includes('like')) {
             formatLikeCriteria(formattedCriterion);
         }
 
         if (criterion.subCriteria && criterion.subCriteria.length > 0) {
+            formattedCriterion.subQuery = true;
             formattedCriterion.subCriteria = formatCriteria(criterion.subCriteria);
         } else {
             formattedCriterion.subCriteria = undefined;
         }
 
         return formattedCriterion;
+    }).filter(criterion => {
+        if (!criterion.field || !criterion.op) {
+            return false;
+        }
+
+        if (criterion.subQuery) {
+            return Array.isArray(criterion.subCriteria) && criterion.subCriteria.length > 0;
+        }
+
+        return criterion.value !== undefined && criterion.value !== null;
     });
 }
 

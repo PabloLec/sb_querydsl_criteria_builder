@@ -9,7 +9,7 @@
           <div class="flex-none">
             <operation-selector v-if="criterion.field" v-model="criterion.op" :field="criterion.field" :parent-field="parentField" />
           </div>
-          <div class="flex-grow"> <!-- Prend tout l'espace restant -->
+          <div class="flex-grow">
             <value-input v-if="hasValueInput(criterion.field)" v-model="criterion.value" :field="criterion.field" :parent-field="parentField" />
           </div>
         </div>
@@ -23,7 +23,7 @@
       <div v-if="hasSubCriteria(criterion)" class="my-2 ml-6 relative">
         <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-gray-400" style="margin-left: -1rem;"></div>
         <search-form :criteria="criterion.subCriteria" :parent-field="criterion.field" :is-root="false"/>
-        <Button v-if="canHaveSubCriteria(criterion.field)" variant="outline" @click="() => addSubCriterion(criterion)" class="flex-shrink-0 w-8 h-8">
+        <Button v-if="isFieldWithSubCriteria(criterion.field)" variant="outline" @click="() => addSubCriterion(criterion)" class="flex-shrink-0 w-8 h-8">
           <Plus class="w-4 h-4 flex-shrink-0" />
         </Button>
       </div>
@@ -65,6 +65,11 @@ const searchResults = ref<Library[]>([]);
 
 const emit = defineEmits(['update:criteria', 'update:results']);
 
+const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField]);
+const hasValueInput = (field: string) => field && currentFieldsConfig.value[field]?.valueComponent;
+const isFieldWithSubCriteria = (field: string) => field && currentFieldsConfig.value[field]?.isFieldWithSubCriteria;
+const hasSubCriteria = (criterion: SearchCriterion) => criterion.subCriteria && criterion.field && currentFieldsConfig.value[criterion.field]?.isFieldWithSubCriteria;
+
 const addCriterion = () => {
   props.criteria.push({ field: '', op: '', value: '', subCriteria: [] });
   emit('update:criteria', props.criteria);
@@ -86,6 +91,7 @@ const removeCriterion = (index: number) => {
 const updateFieldConfig = (criterion: SearchCriterion) => {
   criterion.op = '';
   criterion.value = '';
+  criterion.subQuery = isFieldWithSubCriteria(criterion.field) ? [] : undefined;
   emit('update:criteria', props.criteria);
 };
 
@@ -97,11 +103,4 @@ const search = async () => {
     console.error('Search failed', error);
   }
 };
-
-
-const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField]);
-
-const hasValueInput = (field: string) => field && currentFieldsConfig.value[field]?.valueComponent;
-const canHaveSubCriteria = (field: string) => field && currentFieldsConfig.value[field]?.canHaveSubCriteria;
-const hasSubCriteria = (criterion: SearchCriterion) => criterion.subCriteria && criterion.field && currentFieldsConfig.value[criterion.field]?.canHaveSubCriteria;
 </script>
