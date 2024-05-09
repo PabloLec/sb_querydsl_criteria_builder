@@ -14,7 +14,7 @@ onMounted(async () => {
 
 <template>
   <div class="container py-10 mx-auto">
-    <search-form :criteria="criteria"/>
+    <search-form :criteria="criteria" :is-root="true" :parent-field="library"/>
   </div>
   <div class="container py-10 mx-auto">
     <SearchResults/>
