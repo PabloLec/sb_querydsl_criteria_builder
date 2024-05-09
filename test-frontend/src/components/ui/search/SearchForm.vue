@@ -43,7 +43,7 @@ import {ref, computed, onMounted, watch, PropType} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {Library, SearchCriterion} from '@/lib/search/types';
 import {fieldsConfiguration} from '@/lib/search/fieldsConfiguration';
-import {getLibrariesByQuery} from '@/lib/api/client';
+import {getLibrariesByQuery, filterCriteria} from '@/lib/api/client';
 import FieldSelector from './form/FieldSelector.vue';
 import OperationSelector from './form/OperationSelector.vue';
 import ValueInput from './form/ValueInput.vue';
@@ -64,15 +64,16 @@ const props = defineProps({
   }
 });
 
-onMounted(async () => {
+const loadCriteriaFromURL = () => {
   if (!props.isRoot) {
     return;
   }
-  await router.isReady();
+
   const queryCriteria = route.query.criteria;
   if (queryCriteria) {
     try {
-      const initialCriteria = JSON.parse(decodeURIComponent(queryCriteria));
+      const decodedCriteria = atob(queryCriteria);
+      const initialCriteria = JSON.parse(decodedCriteria);
       if (Array.isArray(initialCriteria)) {
         props.criteria.splice(0, props.criteria.length, ...initialCriteria);
       }
@@ -80,18 +81,29 @@ onMounted(async () => {
       console.error('Failed to parse criteria from URL:', error);
     }
   }
-});
+};
 
-watch(props.criteria, (newCriteria) => {
+const updateCriteriaInURL = (newCriteria) => {
   if (!props.isRoot) {
     return;
   }
-  const queryString = encodeURIComponent(JSON.stringify(newCriteria));
-  router.replace({ query: { criteria: queryString } }).catch(err => {
+
+  const criteriaString = JSON.stringify(filterCriteria(newCriteria));
+  const encodedCriteria = btoa(criteriaString); // Encode en base64
+  router.replace({ query: { criteria: encodedCriteria } }).catch(err => {
     console.error('Failed to update URL:', err);
   });
-}, { deep: true });
+};
 
+
+onMounted(async () => {
+  await router.isReady();
+  loadCriteriaFromURL();
+});
+
+watch(props.criteria, newCriteria => {
+  updateCriteriaInURL(newCriteria);
+}, { deep: true });
 const searchResults = ref<Library[]>([]);
 
 

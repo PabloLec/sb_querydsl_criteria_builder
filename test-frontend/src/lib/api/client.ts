@@ -1,11 +1,12 @@
 import axios from 'axios';
-import { SearchCriterion, Library } from '@/lib/search/types.ts';
+import {Library, SearchCriterion} from '@/lib/search/types.ts';
 
 const API_URL = 'http://localhost:8080/api/v1';
 
-export async function getLibrariesByQuery(query: SearchCriterion[]): Promise<Library[]> {
+export const getLibrariesByQuery = async (query: SearchCriterion[]): Promise<Library[]> => {
     try {
-        const formattedQuery = formatCriteria(query);
+        const queryCopy = JSON.parse(JSON.stringify(query));
+        const formattedQuery = processCriteria(queryCopy);
         const response = await axios.post<Library[]>(
             `${API_URL}/library/query`,
             formattedQuery,
@@ -22,47 +23,80 @@ export async function getLibrariesByQuery(query: SearchCriterion[]): Promise<Lib
     }
 }
 
-function formatCriteria(criteria: SearchCriterion[]): SearchCriterion[] {
+const processCriteria = (rawCriteria: SearchCriterion[]): SearchCriterion[] => {
+    const cleaned = cleanCriteria(rawCriteria);
+    const filtered = filterValidCriteria(cleaned);
+    return formatCriteria(filtered);
+};
+
+export const filterCriteria = (criteria: SearchCriterion[]): SearchCriterion[] => {
+    const cleaned = cleanCriteria(criteria);
+    return filterValidCriteria(cleaned);
+}
+
+const cleanCriteria = (criteria: SearchCriterion[]): SearchCriterion[] => {
     return criteria.map(criterion => {
-        const formattedCriterion: SearchCriterion = {
+        const cleanedCriterion = {
             field: criterion.field,
             op: criterion.op,
-            subQuery: criterion.subQuery,
-            value: criterion.value?.toString()
+            subQuery: criterion.subCriteria && criterion.subCriteria.length > 0,
+            value: criterion.value,
+            subCriteria: criterion.subCriteria && criterion.subCriteria.length > 0
+                ? criterion.subCriteria
+                : undefined
         };
 
-        if (criterion.op?.toLowerCase().includes('like')) {
-            formatLikeCriteria(formattedCriterion);
-        }
-
         if (!criterion.value) {
-            formattedCriterion.value = undefined;
+            cleanedCriterion.value = undefined;
         }
 
-        if (criterion.subCriteria && criterion.subCriteria.length > 0) {
-            formattedCriterion.subQuery = true;
-            formattedCriterion.subCriteria = formatCriteria(criterion.subCriteria);
-        } else {
-            formattedCriterion.subCriteria = undefined;
+        if (criterion.subQuery) {
+            cleanedCriterion.subCriteria = cleanCriteria(criterion.subCriteria);
         }
 
-        return formattedCriterion;
-    }).filter(criterion => {
+        return cleanedCriterion;
+    });
+};
+
+const filterValidCriteria = (criteria: SearchCriterion[]): SearchCriterion[] => {
+    return criteria.filter(criterion => {
         if (!criterion.field || !criterion.op) {
             return false;
         }
 
         if (criterion.subQuery) {
-            return Array.isArray(criterion.subCriteria) && criterion.subCriteria.length > 0;
+            if (Array.isArray(criterion.subCriteria) && criterion.subCriteria.length > 0) {
+                criterion.subCriteria = filterValidCriteria(criterion.subCriteria);
+                return criterion.subCriteria.length > 0;
+            }
+            return false;
         }
 
         return criterion.value !== undefined && criterion.value !== null;
     });
-}
+};
 
-function formatLikeCriteria(criteria: SearchCriterion): SearchCriterion {
-    if (criteria.value && !criteria.value.includes('%')) {
-        criteria.value = `%${criteria.value}%`;
+const formatCriteria = (criteria: SearchCriterion[]): SearchCriterion[] => {
+    return criteria.map(criterion => {
+        if (criterion.value !== undefined) {
+            criterion.value = criterion.value.toString();
+        }
+
+        if (criterion.op?.toLowerCase().includes('like')) {
+            formatLikeCriterion(criterion);
+        }
+
+        if (criterion.subQuery) {
+            criterion.subCriteria = formatCriteria(criterion.subCriteria);
+        }
+
+        return criterion;
+    });
+};
+
+const formatLikeCriterion = (criterion: SearchCriterion): SearchCriterion => {
+    if (criterion.value && !criterion.value.includes('%')) {
+        criterion.value = `%${criterion.value}%`;
     }
-    return criteria;
+    return criterion;
 }
