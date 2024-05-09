@@ -9,9 +9,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import SearchResults from '@/components/SearchResults.vue';
-import SearchForm from '@/components/ui/searchForm/SearchForm.vue';
-import type { SearchCriterion, Library } from '@/lib/types';
+import SearchResults from '@/components/ui/results/SearchResults.vue';
+import SearchForm from '@/components/ui/search/SearchForm.vue';
+import type { SearchCriterion, Library } from '@/lib/search/types.ts';
 
 const criteria = ref<SearchCriterion[]>([]);
 const searchResultsData = ref<Library[]>([]);

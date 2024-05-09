@@ -5,9 +5,9 @@
 </template>
 
 <script lang="ts" setup>
-import LibraryTable from '@/components/ui/LibraryTable.vue';
-import { columns } from "@/lib/search/columns";
-import type { Library } from '@/lib/types';
+import LibraryTable from '@/components/ui/results/table/LibraryTable.vue';
+import { columns } from "@/lib/results/columns.ts";
+import type { Library } from '@/lib/search/types.ts';
 
 const props = defineProps<{
   data: Library[]

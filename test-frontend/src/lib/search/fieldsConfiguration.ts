@@ -1,4 +1,4 @@
-import { FieldConfig } from './types';
+import { FieldConfig } from './types.ts';
 
 const libraryFieldsConfiguration: Record<string, FieldConfig> = {
     name: {

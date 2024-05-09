@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SearchCriterion, Library } from '@/lib/types';
+import { SearchCriterion, Library } from '@/lib/search/types.ts';
 
 const API_URL = 'http://localhost:8080/api/v1';
 

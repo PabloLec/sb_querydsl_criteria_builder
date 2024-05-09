@@ -19,10 +19,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
+} from '@/components/ui/shadcn/select'
+import { Input } from '@/components/ui/shadcn/input'
 import {computed} from 'vue';
-import {fieldsConfiguration} from '@/lib/fieldsConfiguration';
+import {fieldsConfiguration} from '@/lib/search/fieldsConfiguration.ts';
 
 const props = defineProps({
   modelValue: [String, Number],

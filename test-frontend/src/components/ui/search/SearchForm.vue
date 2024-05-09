@@ -7,19 +7,19 @@
           <operation-selector v-if="hasOperations(criterion.field)" v-model="criterion.op" :field="criterion.field" :parent-field="parentField" />
           <value-input v-if="hasValueInput(criterion.field)" v-model="criterion.value" :field="criterion.field" :parent-field="parentField" />
         </div>
-        <Button size="icon" @click="removeCriterion(index)" class="bg-orange-400 flex-shrink-0 w-10 h-10">
-          <Minus class="w-4 h-4 flex-shrink-0" />
+        <Button variant="ghost" size="icon" @click="removeCriterion(index)" class=" hover:text-destructive flex-shrink-0 w-10 h-10">
+          <CircleMinus class="w-4 h-4 flex-shrink-0" />
         </Button>
       </div>
       <div v-if="hasSubCriteria(criterion)" class="my-2 ml-6 relative">
         <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-gray-400" style="margin-left: -1rem;"></div>
         <search-form :criteria="criterion.subCriteria" :parent-field="criterion.field" :is-root="false"/>
-        <Button v-if="canHaveSubCriteria(criterion.field)" @click="() => addSubCriterion(criterion)" class="bg-emerald-400 flex-shrink-0 w-10 h-10">
+        <Button v-if="canHaveSubCriteria(criterion.field)" variant="outline" @click="() => addSubCriterion(criterion)" class="flex-shrink-0 w-8 h-8">
           <Plus class="w-4 h-4 flex-shrink-0" />
         </Button>
       </div>
     </div>
-    <Button v-if="isRoot" size="icon" @click="addCriterion" class="bg-emerald-400 flex-shrink-0 w-10 h-10">
+    <Button v-if="isRoot" variant="outline" @click="addCriterion" class="flex-shrink-0 w-8 h-8">
       <Plus class="w-4 h-4 flex-shrink-0" />
     </Button>
     <Separator v-if="isRoot" class="m-4" />
@@ -33,15 +33,15 @@
 
 <script lang="ts" setup>
 import {ref, computed} from 'vue';
-import {SearchCriterion} from '@/lib/types';
-import {fieldsConfiguration} from '@/lib/fieldsConfiguration';
-import {getLibrariesByQuery} from '@/lib/api';
-import FieldSelector from './FieldSelector.vue';
-import OperationSelector from './OperationSelector.vue';
-import ValueInput from './ValueInput.vue';
-import {Minus, Plus} from 'lucide-vue-next';
-import {Button} from '@/components/ui/button';
-import {Separator} from '@/components/ui/separator';
+import {SearchCriterion} from '@/lib/search/types';
+import {fieldsConfiguration} from '@/lib/search/fieldsConfiguration';
+import {getLibrariesByQuery} from '@/lib/api/client';
+import FieldSelector from './form/FieldSelector.vue';
+import OperationSelector from './form/OperationSelector.vue';
+import ValueInput from './form/ValueInput.vue';
+import {CircleMinus, Plus} from 'lucide-vue-next';
+import {Button} from '@/components/ui/shadcn/button';
+import {Separator} from '@/components/ui/shadcn/separator';
 
 const props = defineProps({
   criteria: Array as PropType<SearchCriterion[]>,

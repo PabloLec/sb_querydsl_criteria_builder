@@ -1,11 +1,11 @@
 <template>
   <Select @update:modelValue="handleChange">
     <SelectTrigger class="w-[180px]">
-      <SelectValue placeholder="Field" />
+      <SelectValue placeholder="op" />
     </SelectTrigger>
     <SelectContent>
-      <SelectItem v-for="(config, field) in currentFieldsConfig" :key="field" :value="field">
-        {{ field }}
+      <SelectItem v-for="op in currentFieldsConfig[field]?.opOptions" :key="op" :value="op">
+        {{ op }}
       </SelectItem>
     </SelectContent>
   </Select>
@@ -18,11 +18,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/components/ui/shadcn/select';
 import { computed } from 'vue';
-import { fieldsConfiguration } from '@/lib/fieldsConfiguration';
+import { fieldsConfiguration } from '@/lib/search/fieldsConfiguration.ts';
 
 const props = defineProps({
+  field: String,
   parentField: String
 });
 
