@@ -7,23 +7,18 @@
   </select>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { fieldsConfiguration } from '@/lib/fieldsConfiguration';
+<script lang="ts" setup>
+import {fieldsConfiguration} from '@/lib/fieldsConfiguration';
 
-export default defineComponent({
-  props: {
-    modelValue: String
-  },
-  data() {
-    return { fieldsConfiguration };
-  },
-  methods: {
-    handleChange(event) {
-      this.$emit('update:modelValue', event.target.value);
-      this.$emit('change');
-    }
-  },
-  emits: ['update:modelValue', 'change']
+const props = defineProps({
+  modelValue: String
 });
+
+const emit = defineEmits(['update:modelValue', 'change']);
+
+const handleChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement;
+  emit('update:modelValue', target.value);
+  emit('change');
+};
 </script>
