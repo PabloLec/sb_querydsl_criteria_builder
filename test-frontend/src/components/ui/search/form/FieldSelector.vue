@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/shadcn/select';
-import { computed } from 'vue';
+import {computed, watch} from 'vue';
 import { fieldsConfiguration } from '@/lib/search/fieldsConfiguration.ts';
 
 const props = defineProps({
@@ -30,7 +30,13 @@ const emit = defineEmits(['update:modelValue', 'change']);
 
 const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField]);
 
-const handleChange = (value: string) => {
+const handleChange = (value: string | number) => {
+  console.log("Value changed to:", value);
   emit('update:modelValue', value);
 };
+
+watch(() => props.modelValue, (newValue) => {
+  console.log("New modelValue received:", newValue);
+});
+
 </script>

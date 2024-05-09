@@ -13,12 +13,10 @@
             <value-input v-if="hasValueInput(criterion.field)" v-model="criterion.value" :field="criterion.field" :parent-field="parentField" />
           </div>
         </div>
-
         <Button variant="ghost" size="icon" @click="removeCriterion(index)" class="hover:text-destructive flex-shrink-0 w-10 h-10">
           <CircleMinus class="w-4 h-4 flex-shrink-0" />
         </Button>
       </div>
-
 
       <div v-if="hasSubCriteria(criterion)" class="my-2 ml-6 relative">
         <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-gray-400" style="margin-left: -1rem;"></div>
@@ -41,8 +39,9 @@
 </template>
 
 <script lang="ts" setup>
-import {ref, computed} from 'vue';
-import {SearchCriterion} from '@/lib/search/types';
+import {ref, computed, onMounted, watch, PropType} from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import {Library, SearchCriterion} from '@/lib/search/types';
 import {fieldsConfiguration} from '@/lib/search/fieldsConfiguration';
 import {getLibrariesByQuery} from '@/lib/api/client';
 import FieldSelector from './form/FieldSelector.vue';
@@ -52,6 +51,10 @@ import {CircleMinus, Plus} from 'lucide-vue-next';
 import {Button} from '@/components/ui/shadcn/button';
 import {Separator} from '@/components/ui/shadcn/separator';
 
+const emit = defineEmits(['update:criteria', 'update:results']);
+
+const route = useRoute();
+const router = useRouter();
 const props = defineProps({
   criteria: Array as PropType<SearchCriterion[]>,
   parentField: String,
@@ -61,9 +64,36 @@ const props = defineProps({
   }
 });
 
+onMounted(async () => {
+  if (!props.isRoot) {
+    return;
+  }
+  await router.isReady();
+  const queryCriteria = route.query.criteria;
+  if (queryCriteria) {
+    try {
+      const initialCriteria = JSON.parse(decodeURIComponent(queryCriteria));
+      if (Array.isArray(initialCriteria)) {
+        props.criteria.splice(0, props.criteria.length, ...initialCriteria);
+      }
+    } catch (error) {
+      console.error('Failed to parse criteria from URL:', error);
+    }
+  }
+});
+
+watch(props.criteria, (newCriteria) => {
+  if (!props.isRoot) {
+    return;
+  }
+  const queryString = encodeURIComponent(JSON.stringify(newCriteria));
+  router.replace({ query: { criteria: queryString } }).catch(err => {
+    console.error('Failed to update URL:', err);
+  });
+}, { deep: true });
+
 const searchResults = ref<Library[]>([]);
 
-const emit = defineEmits(['update:criteria', 'update:results']);
 
 const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField]);
 const hasValueInput = (field: string) => field && currentFieldsConfig.value[field]?.valueComponent;
