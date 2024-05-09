@@ -35,6 +35,10 @@ function formatCriteria(criteria: SearchCriterion[]): SearchCriterion[] {
             formatLikeCriteria(formattedCriterion);
         }
 
+        if (!criterion.value) {
+            formattedCriterion.value = undefined;
+        }
+
         if (criterion.subCriteria && criterion.subCriteria.length > 0) {
             formattedCriterion.subQuery = true;
             formattedCriterion.subCriteria = formatCriteria(criterion.subCriteria);
