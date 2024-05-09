@@ -22,6 +22,7 @@
     <Button v-if="isRoot" size="icon" @click="addCriterion" class="bg-emerald-400 flex-shrink-0 w-10 h-10">
       <Plus class="w-4 h-4 flex-shrink-0" />
     </Button>
+    <Separator v-if="isRoot" class="m-4" />
     <div class="flex justify-end mt-4">
       <Button v-if="isRoot" @click="search" class="bg-blue-400 flex-shrink-0 mr-6">
         Search
@@ -40,6 +41,7 @@ import OperationSelector from './OperationSelector.vue';
 import ValueInput from './ValueInput.vue';
 import {Minus, Plus} from 'lucide-vue-next';
 import {Button} from '@/components/ui/button';
+import {Separator} from '@/components/ui/separator';
 
 const props = defineProps({
   criteria: Array as PropType<SearchCriterion[]>,

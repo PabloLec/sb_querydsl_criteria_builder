@@ -49,10 +49,8 @@ function formatCriteria(criteria: SearchCriterion[]): SearchCriterion[] {
 }
 
 function formatLikeCriteria(criteria: SearchCriterion): SearchCriterion {
-    if (criteria.value && !criteria.value.startsWith('%')) {
-        criteria.value = `%${criteria.value}`;
+    if (criteria.value && !criteria.value.includes('%')) {
+        criteria.value = `%${criteria.value}%`;
     }
-    if (criteria.value && !criteria.value.endsWith('%')) {
-        criteria.value = `${criteria.value}%`;
-    }
+    return criteria;
 }
