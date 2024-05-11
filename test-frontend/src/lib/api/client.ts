@@ -55,7 +55,7 @@ const cleanCriteria = (criteria: SearchCriterion[]): SearchCriterion[] => {
 
 const filterValidCriteria = (criteria: SearchCriterion[]): SearchCriterion[] => {
   return criteria.filter((criterion) => {
-    if (!criterion.field || !criterion.op) {
+    if (!criterion.field || !criterion.op || (!criterion.subQuery && !criterion.value)) {
       return false
     }
 

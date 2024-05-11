@@ -8,7 +8,7 @@
     class="w-full"
   />
 
-  <Select v-if="isSelect" :modelValue="modelValue" @update:modelValue="handleChange">
+  <Select v-if="isSelect" :modelValue="stringModelValue" @update:modelValue="handleChange">
     <SelectTrigger class="w-[180px]">
       <SelectValue placeholder="Value" />
     </SelectTrigger>
@@ -59,15 +59,19 @@ const df = new DateFormatter("fr-FR", {
 })
 
 const dateValue = ref<DateValue>()
+const stringModelValue = computed(() => {
+  return typeof props.modelValue === 'string' ? props.modelValue : undefined;
+});
+
 
 const emit = defineEmits(["update:modelValue"])
 
-const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField])
+const currentFieldsConfig = computed(() => props.parentField && fieldsConfiguration[props.parentField])
 
-const isInput = computed(() => currentFieldsConfig.value[props.field]?.valueComponent === "input")
-const isSelect = computed(() => currentFieldsConfig.value[props.field]?.valueComponent === "select")
-const isDate = computed(() => currentFieldsConfig.value[props.field]?.valueComponent === "date")
-const valueOptions = computed(() => currentFieldsConfig.value[props.field]?.valueOptions ?? [])
+const isInput = computed(() => currentFieldsConfig.value && props.field && currentFieldsConfig.value[props.field]?.valueComponent === "input")
+const isSelect = computed(() => currentFieldsConfig.value && props.field && currentFieldsConfig.value[props.field]?.valueComponent === "select")
+const isDate = computed(() => currentFieldsConfig.value && props.field && currentFieldsConfig.value[props.field]?.valueComponent === "date")
+const valueOptions = computed(() => (currentFieldsConfig.value && props.field && currentFieldsConfig.value[props.field]?.valueOptions) ?? [])
 
 watch(dateValue, (newDate) => {
   if (newDate) {
@@ -77,8 +81,8 @@ watch(dateValue, (newDate) => {
 })
 
 watchEffect(() => {
-  if (isDate.value && props.modelValue) {
-    const [year, month, day] = props.modelValue.split("-").map(Number)
+  if (isDate.value && props.modelValue && stringModelValue.value) {
+    const [year, month, day] = stringModelValue.value.split("-").map(Number)
     dateValue.value = new CalendarDate(year, month, day)
   }
 })

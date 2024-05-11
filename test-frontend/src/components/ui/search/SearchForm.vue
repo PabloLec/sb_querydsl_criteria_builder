@@ -94,9 +94,9 @@ const loadCriteriaFromURL = () => {
   const queryCriteria = route.query.criteria
   if (queryCriteria) {
     try {
-      const decodedCriteria = atob(queryCriteria)
+      const decodedCriteria = atob(queryCriteria as string)
       const initialCriteria = JSON.parse(decodedCriteria)
-      if (Array.isArray(initialCriteria)) {
+      if (props.criteria && Array.isArray(initialCriteria)) {
         props.criteria.splice(0, props.criteria.length, ...initialCriteria)
       }
     } catch (error) {
@@ -105,7 +105,7 @@ const loadCriteriaFromURL = () => {
   }
 }
 
-const updateCriteriaInURL = (newCriteria) => {
+const updateCriteriaInURL = (newCriteria: SearchCriterion[]) => {
   if (!props.isRoot) {
     return
   }
@@ -123,7 +123,7 @@ onMounted(async () => {
 })
 
 watch(
-  props.criteria,
+  props.criteria!!,
   (newCriteria) => {
     updateCriteriaInURL(newCriteria)
   },
@@ -131,17 +131,18 @@ watch(
 )
 const searchResults = ref<Library[]>([])
 
-const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField])
-const hasValueInput = (field: string) => field && currentFieldsConfig.value[field]?.valueComponent
-const isFieldWithSubCriteria = (field: string) =>
-  field && currentFieldsConfig.value[field]?.isFieldWithSubCriteria
+const currentFieldsConfig = computed(() => props.parentField && fieldsConfiguration[props.parentField]);
+const hasValueInput = (field: string | undefined) => field && currentFieldsConfig.value && currentFieldsConfig.value[field]?.valueComponent
+const isFieldWithSubCriteria = (field: string | undefined): boolean =>
+  !!field && !!currentFieldsConfig.value && !!currentFieldsConfig.value[field]?.isFieldWithSubCriteria;
 const hasSubCriteria = (criterion: SearchCriterion) =>
   criterion.subCriteria &&
   criterion.field &&
+  currentFieldsConfig.value &&
   currentFieldsConfig.value[criterion.field]?.isFieldWithSubCriteria
 
 const addCriterion = () => {
-  props.criteria.push({ field: "", op: "", value: "", subCriteria: [] })
+  props.criteria?.push({ field: "", op: "", value: "", subCriteria: [] })
   emit("update:criteria", props.criteria)
 }
 
@@ -154,19 +155,20 @@ const addSubCriterion = (criterion: SearchCriterion) => {
 }
 
 const removeCriterion = (index: number) => {
-  props.criteria.splice(index, 1)
+  props.criteria?.splice(index, 1)
   emit("update:criteria", props.criteria)
 }
 
 const updateFieldConfig = (criterion: SearchCriterion) => {
   criterion.op = ""
   criterion.value = ""
-  criterion.subQuery = isFieldWithSubCriteria(criterion.field) ? [] : undefined
+  criterion.subQuery = isFieldWithSubCriteria(criterion.field)
   emit("update:criteria", props.criteria)
 }
 
 const search = async () => {
   try {
+    if (!props.criteria) return
     searchResults.value = await getLibrariesByQuery(props.criteria)
     emit("update:results", searchResults.value)
   } catch (error) {

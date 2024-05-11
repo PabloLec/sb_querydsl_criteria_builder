@@ -24,9 +24,9 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue", "change"])
 
-const fieldConfig = computed(() => fieldsConfiguration[props.parentField][props.field])
+const fieldConfig = computed(() => props.parentField && props.field && fieldsConfiguration[props.parentField][props.field])
 
-const operators = computed(() => fieldTypeToOperators[fieldConfig.value.fieldType] || [])
+const operators = computed(() => fieldConfig.value && fieldTypeToOperators[fieldConfig.value.fieldType] || [])
 
 const handleChange = (value: string) => {
   emit("update:modelValue", value)

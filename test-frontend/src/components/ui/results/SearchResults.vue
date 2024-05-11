@@ -1,6 +1,6 @@
 <template>
   <div class="container py-10 mx-auto">
-    <LibraryTable :columns="columns" :data="data" />
+    <LibraryTable :columns="columns" :data="props.data" />
   </div>
 </template>
 
