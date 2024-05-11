@@ -46,9 +46,7 @@ class FrontendIntegrationTest extends AbstractIntegrationTest {
     @Test
     void frontendTest() {
         try (Playwright playwright = Playwright.create()) {
-            Browser browser = playwright
-                    .firefox()
-                    .launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(50));
+            Browser browser = playwright.firefox().launch();
             Page page = browser.newPage();
             page.navigate("http://localhost:4173");
         }
