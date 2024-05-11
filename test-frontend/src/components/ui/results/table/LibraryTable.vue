@@ -1,28 +1,6 @@
-<script generic="TData, TValue" lang="ts" setup>
-import type { ColumnDef } from "@tanstack/vue-table"
-import { FlexRender, getCoreRowModel, useVueTable } from "@tanstack/vue-table"
-
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/shadcn/table"
-
-const props = defineProps<{
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-}>()
-
-const table = useVueTable({
-  get data() {
-    return props.data
-  },
-  get columns() {
-    return props.columns
-  },
-  getCoreRowModel: getCoreRowModel(),
-})
-</script>
-
 <template>
   <div class="border rounded-md">
-    <Table>
+    <Table :data-testid="dataTestid">
       <TableHeader>
         <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
           <TableHead v-for="header in headerGroup.headers" :key="header.id">
@@ -55,3 +33,26 @@ const table = useVueTable({
     </Table>
   </div>
 </template>
+
+<script generic="TData, TValue" lang="ts" setup>
+import type { ColumnDef } from "@tanstack/vue-table"
+import { FlexRender, getCoreRowModel, useVueTable } from "@tanstack/vue-table"
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/shadcn/table"
+
+const props = defineProps<{
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
+  dataTestid: string
+}>()
+
+const table = useVueTable({
+  get data() {
+    return props.data
+  },
+  get columns() {
+    return props.columns
+  },
+  getCoreRowModel: getCoreRowModel(),
+})
+</script>

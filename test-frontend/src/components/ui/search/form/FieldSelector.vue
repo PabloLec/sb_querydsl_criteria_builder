@@ -2,13 +2,12 @@
   <div :class="{ 'border-red-400 border-2 rounded-lg w-fit': !props.modelValue }">
     <Popover v-model:open="open">
       <PopoverTrigger as-child>
-        <Button variant="outline" role="combobox" :aria-expanded="open" class="w-[200px] justify-between">
+        <Button variant="outline" role="combobox" :aria-expanded="open" class="w-[200px] justify-between" :data-testid="dataTestid">
           {{ value ? availableFields?.find((field) => field.value === value)?.label : "Select field" }}
-
           <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent class="w-[200px] p-0">
+      <PopoverContent class="w-[200px] p-0" :data-testid="dataTestid + '-popover'">
         <Command v-model="value">
           <CommandInput placeholder="Search field" />
           <CommandEmpty>No field found.</CommandEmpty>
@@ -50,6 +49,7 @@ import { fieldsConfiguration } from "@/lib/search/fieldsConfiguration.ts"
 const props = defineProps({
   parentField: String,
   modelValue: String,
+  dataTestid: String,
 })
 
 const open = ref(false)
