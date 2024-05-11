@@ -1,7 +1,7 @@
 export interface FieldConfig {
   label: string
-  fieldType: "string" | "number" | "date" | "datetime" | "subquery"
-  valueComponent: "input" | "select" | "none"
+  fieldType: "string" | "enum" | "boolean" | "number" | "date" | "datetime" | "subquery"
+  valueComponent: "input" | "select" | "date" | "none"
   isFieldWithSubCriteria: boolean
   valueOptions?: string[]
 }

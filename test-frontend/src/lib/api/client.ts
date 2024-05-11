@@ -45,7 +45,7 @@ const cleanCriteria = (criteria: SearchCriterion[]): SearchCriterion[] => {
       cleanedCriterion.value = undefined
     }
 
-    if (criterion.subQuery) {
+    if (criterion.subQuery && Array.isArray(criterion.subCriteria)) {
       cleanedCriterion.subCriteria = cleanCriteria(criterion.subCriteria)
     }
 
@@ -76,6 +76,9 @@ const formatCriteria = (criteria: SearchCriterion[]): SearchCriterion[] => {
     if (criterion.value !== undefined) {
       criterion.value = criterion.value.toString()
     }
+    if (!criterion.op) {
+      return criterion
+    }
 
     if (["like", "notLike"].includes(criterion.op?.toLowerCase())) {
       formatLikeCriterion(criterion)
@@ -83,7 +86,7 @@ const formatCriteria = (criteria: SearchCriterion[]): SearchCriterion[] => {
       formatCollectionCriterion(criterion)
     }
 
-    if (criterion.subQuery) {
+    if (criterion.subQuery && Array.isArray(criterion.subCriteria)) {
       criterion.subCriteria = formatCriteria(criterion.subCriteria)
     }
 

@@ -7,7 +7,7 @@ const routes = [
     path: "/",
     name: "Home",
     component: App,
-    props: (route) => ({ query: route.query.criteria }),
+    props: (route: any) => ({ query: route.query.criteria }),
   },
 ]
 

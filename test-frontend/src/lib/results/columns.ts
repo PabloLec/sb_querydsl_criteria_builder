@@ -1,19 +1,18 @@
 import { h } from "vue"
-import type { components } from "../api-schema"
+import type { Library } from "@/lib/search/types"
+import { ColumnDef } from "@tanstack/vue-table"
 
-const createColumn = (
-  key: keyof components["schemas"]["Library"],
-  headerName: string
-): ColumnDef<components["schemas"]["Library"]> => ({
+const createColumn = (key: keyof Library, headerName: string): ColumnDef<Library> => ({
   accessorKey: key,
   header: () => h("div", { class: "text-left" }, headerName),
   cell: ({ row }) => {
     const formatted = row.getValue(key as string) || "-"
+    // @ts-ignore
     return h("div", { class: "text-left font-medium" }, formatted)
   },
 })
 
-export const columns: ColumnDef<components["schemas"]["Library"]>[] = [
+export const columns: ColumnDef<Library>[] = [
   createColumn("name", "Name"),
   createColumn("location", "Location"),
   createColumn("openingHours", "Opening Hours"),

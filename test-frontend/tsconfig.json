@@ -25,5 +25,6 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["node_modules", "dist", "src/components/ui/shadcn/**"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
