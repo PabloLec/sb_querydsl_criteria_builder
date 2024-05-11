@@ -15,7 +15,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/shadcn/select"
 import { computed, watch } from "vue"
 import { fieldsConfiguration } from "@/lib/search/fieldsConfiguration.ts"
-import { FieldConfig } from "@/lib/search/types";
+import { FieldConfig } from "@/lib/search/types"
 
 const props = defineProps({
   parentField: String,

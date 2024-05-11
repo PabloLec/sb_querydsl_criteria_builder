@@ -131,10 +131,11 @@ watch(
 )
 const searchResults = ref<Library[]>([])
 
-const currentFieldsConfig = computed(() => props.parentField && fieldsConfiguration[props.parentField]);
-const hasValueInput = (field: string | undefined) => field && currentFieldsConfig.value && currentFieldsConfig.value[field]?.valueComponent
+const currentFieldsConfig = computed(() => props.parentField && fieldsConfiguration[props.parentField])
+const hasValueInput = (field: string | undefined) =>
+  field && currentFieldsConfig.value && currentFieldsConfig.value[field]?.valueComponent
 const isFieldWithSubCriteria = (field: string | undefined): boolean =>
-  !!field && !!currentFieldsConfig.value && !!currentFieldsConfig.value[field]?.isFieldWithSubCriteria;
+  !!field && !!currentFieldsConfig.value && !!currentFieldsConfig.value[field]?.isFieldWithSubCriteria
 const hasSubCriteria = (criterion: SearchCriterion) =>
   criterion.subCriteria &&
   criterion.field &&

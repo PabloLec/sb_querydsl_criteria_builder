@@ -60,18 +60,35 @@ const df = new DateFormatter("fr-FR", {
 
 const dateValue = ref<DateValue>()
 const stringModelValue = computed(() => {
-  return typeof props.modelValue === 'string' ? props.modelValue : undefined;
-});
-
+  return typeof props.modelValue === "string" ? props.modelValue : undefined
+})
 
 const emit = defineEmits(["update:modelValue"])
 
 const currentFieldsConfig = computed(() => props.parentField && fieldsConfiguration[props.parentField])
 
-const isInput = computed(() => currentFieldsConfig.value && props.field && currentFieldsConfig.value[props.field]?.valueComponent === "input")
-const isSelect = computed(() => currentFieldsConfig.value && props.field && currentFieldsConfig.value[props.field]?.valueComponent === "select")
-const isDate = computed(() => currentFieldsConfig.value && props.field && currentFieldsConfig.value[props.field]?.valueComponent === "date")
-const valueOptions = computed(() => (currentFieldsConfig.value && props.field && currentFieldsConfig.value[props.field]?.valueOptions) ?? [])
+const isInput = computed(
+  () =>
+    currentFieldsConfig.value &&
+    props.field &&
+    currentFieldsConfig.value[props.field]?.valueComponent === "input"
+)
+const isSelect = computed(
+  () =>
+    currentFieldsConfig.value &&
+    props.field &&
+    currentFieldsConfig.value[props.field]?.valueComponent === "select"
+)
+const isDate = computed(
+  () =>
+    currentFieldsConfig.value &&
+    props.field &&
+    currentFieldsConfig.value[props.field]?.valueComponent === "date"
+)
+const valueOptions = computed(
+  () =>
+    (currentFieldsConfig.value && props.field && currentFieldsConfig.value[props.field]?.valueOptions) ?? []
+)
 
 watch(dateValue, (newDate) => {
   if (newDate) {
