@@ -1,15 +1,13 @@
 package dev.pablolec.backend.db;
 
-import dev.pablolec.backend.AbstractIntegrationTest;
-import dev.pablolec.backend.db.model.*;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import dev.pablolec.backend.AbstractIntegrationTest;
+import dev.pablolec.backend.db.model.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.junit.jupiter.api.Test;
 
 class RepositoryTests extends AbstractIntegrationTest {
 
@@ -85,7 +83,9 @@ class RepositoryTests extends AbstractIntegrationTest {
         bookTagRepository.save(bookTag);
 
         Tag foundTag = tagRepository.findById(tag.getTagId()).orElse(null);
-        BookTag foundBookTag = bookTagRepository.findById(new BookTagId(book.getBookId(), tag.getTagId())).orElse(null);
+        BookTag foundBookTag = bookTagRepository
+                .findById(new BookTagId(book.getBookId(), tag.getTagId()))
+                .orElse(null);
         assertNotNull(foundTag);
         assertNotNull(foundBookTag);
         assertEquals("Programming", foundTag.getName());
@@ -121,7 +121,8 @@ class RepositoryTests extends AbstractIntegrationTest {
         borrowedBook = borrowedBookRepository.save(borrowedBook);
 
         User foundUser = userRepository.findById(user.getUserId()).orElse(null);
-        BorrowedBook foundBorrowedBook = borrowedBookRepository.findById(borrowedBook.getBorrowedId()).orElse(null);
+        BorrowedBook foundBorrowedBook =
+                borrowedBookRepository.findById(borrowedBook.getBorrowedId()).orElse(null);
         assertNotNull(foundUser);
         assertNotNull(foundBorrowedBook);
         assertEquals("user1", foundUser.getUsername());
@@ -151,8 +152,11 @@ class RepositoryTests extends AbstractIntegrationTest {
         bookPublisher.setPublisherId(publisher.getPublisherId());
         bookPublisherRepository.save(bookPublisher);
 
-        Publisher foundPublisher = publisherRepository.findById(publisher.getPublisherId()).orElse(null);
-        BookPublisher foundBookPublisher = bookPublisherRepository.findById(new BookPublisherId(book.getBookId(), publisher.getPublisherId())).orElse(null);
+        Publisher foundPublisher =
+                publisherRepository.findById(publisher.getPublisherId()).orElse(null);
+        BookPublisher foundBookPublisher = bookPublisherRepository
+                .findById(new BookPublisherId(book.getBookId(), publisher.getPublisherId()))
+                .orElse(null);
         assertNotNull(foundPublisher);
         assertNotNull(foundBookPublisher);
         assertEquals("Pearson", foundPublisher.getName());
@@ -186,7 +190,8 @@ class RepositoryTests extends AbstractIntegrationTest {
         libraryStaff.setRole("Librarian");
         libraryStaff = libraryStaffRepository.save(libraryStaff);
 
-        LibraryStaff foundLibraryStaff = libraryStaffRepository.findById(libraryStaff.getStaffId()).orElse(null);
+        LibraryStaff foundLibraryStaff =
+                libraryStaffRepository.findById(libraryStaff.getStaffId()).orElse(null);
         assertNotNull(foundLibraryStaff);
         assertEquals("Librarian", foundLibraryStaff.getRole());
     }
@@ -221,7 +226,8 @@ class RepositoryTests extends AbstractIntegrationTest {
         membership.setMembershipStatus("Active");
         membership = membershipRepository.save(membership);
 
-        Membership foundMembership = membershipRepository.findById(membership.getMembershipId()).orElse(null);
+        Membership foundMembership =
+                membershipRepository.findById(membership.getMembershipId()).orElse(null);
         assertNotNull(foundMembership);
         assertEquals("Active", foundMembership.getMembershipStatus());
     }
@@ -262,8 +268,9 @@ class RepositoryTests extends AbstractIntegrationTest {
         eventParticipant.setUserId(user.getUserId());
         eventParticipantRepository.save(eventParticipant);
 
-        EventParticipant foundEventParticipant = eventParticipantRepository.findById(new EventParticipantId(libraryEvent.getEventId(), user.getUserId())).orElse(null);
+        EventParticipant foundEventParticipant = eventParticipantRepository
+                .findById(new EventParticipantId(libraryEvent.getEventId(), user.getUserId()))
+                .orElse(null);
         assertNotNull(foundEventParticipant);
     }
-
 }

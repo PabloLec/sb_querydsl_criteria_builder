@@ -1,17 +1,16 @@
 package dev.pablolec.backend.querybuilder;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import dev.pablolec.backend.AbstractIntegrationTest;
 import dev.pablolec.backend.db.model.Library;
 import dev.pablolec.querybuilder.CriteriaQueryBuilder;
 import dev.pablolec.querybuilder.model.SearchCriterion;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Transactional
 class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
@@ -23,7 +22,9 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
         List<SearchCriterion> criteria = List.of(new SearchCriterion("name", "eq", "NonExistent"));
 
         Exception exception = assertThrows(IllegalStateException.class, () -> {
-            criteriaQueryBuilder.buildQuery(criteria, CriteriaQueryBuilderErrorTests.class).fetch();
+            criteriaQueryBuilder
+                    .buildQuery(criteria, CriteriaQueryBuilderErrorTests.class)
+                    .fetch();
         });
 
         String expectedMessage = "No matching EntityPathBase found";
@@ -88,7 +89,8 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
     void testEmptyCriteriaList() {
         List<SearchCriterion> criteria = List.of();
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertTrue(result.isEmpty());
     }
 
@@ -145,7 +147,8 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
 
     @Test
     void testInvalidCollectionOperator() {
-        List<SearchCriterion> criteria = List.of(new SearchCriterion("libraryId", "notACollectionOperator", "[test1,test2]"));
+        List<SearchCriterion> criteria =
+                List.of(new SearchCriterion("libraryId", "notACollectionOperator", "[test1,test2]"));
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
@@ -209,5 +212,4 @@ class CriteriaQueryBuilderErrorTests extends AbstractIntegrationTest {
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }
-
 }

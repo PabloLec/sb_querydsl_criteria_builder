@@ -2,10 +2,9 @@ package dev.pablolec.backend.db.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import lombok.*;
 
 @Getter
 @Setter

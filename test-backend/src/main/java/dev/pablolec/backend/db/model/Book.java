@@ -1,13 +1,11 @@
 package dev.pablolec.backend.db.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.Set;
+import lombok.*;
 
 @Entity
 @AllArgsConstructor
@@ -20,6 +18,7 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer bookId;
+
     private String title;
     private String isbn;
     private Integer publishYear;

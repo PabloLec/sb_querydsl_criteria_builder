@@ -1,15 +1,14 @@
 package dev.pablolec.backend.configuration;
 
 import com.querydsl.core.types.dsl.EntityPathBase;
+import dev.pablolec.backend.db.model.*;
 import dev.pablolec.querybuilder.CriteriaQueryBuilder;
 import dev.pablolec.querybuilder.EntityPathResolver;
 import jakarta.persistence.EntityManager;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import dev.pablolec.backend.db.model.*;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class QueryBuilderConfiguration {
@@ -21,7 +20,8 @@ public class QueryBuilderConfiguration {
     }
 
     @Bean
-    public CriteriaQueryBuilder dynamicQueryService(EntityManager entityManager, EntityPathResolver entityPathResolver) {
+    public CriteriaQueryBuilder dynamicQueryService(
+            EntityManager entityManager, EntityPathResolver entityPathResolver) {
         return new CriteriaQueryBuilder(entityManager, entityPathResolver);
     }
 

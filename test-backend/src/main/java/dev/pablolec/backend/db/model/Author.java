@@ -1,12 +1,10 @@
 package dev.pablolec.backend.db.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDate;
 import java.util.Set;
+import lombok.*;
 
 @Getter
 @Setter
@@ -19,6 +17,7 @@ public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer authorId;
+
     private String name;
     private String bio;
     private String nationality;

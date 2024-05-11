@@ -1,19 +1,17 @@
 package dev.pablolec.backend.querybuilder;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import dev.pablolec.backend.AbstractIntegrationTest;
 import dev.pablolec.backend.db.model.*;
 import dev.pablolec.querybuilder.CriteriaQueryBuilder;
 import dev.pablolec.querybuilder.model.SearchCriterion;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
     @Autowired
@@ -33,11 +31,10 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                 .build();
         libraryRepository.save(library);
 
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("name", "eq", "Bibliothèque Nationale")
-        );
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("name", "eq", "Bibliothèque Nationale"));
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Bibliothèque Nationale", result.getFirst().getName());
     }
@@ -70,11 +67,10 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         bookRepository.save(book);
 
         SearchCriterion subCriterion = new SearchCriterion("title", "like", "%Java%");
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("book", "exists", List.of(subCriterion))
-        );
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "exists", List.of(subCriterion)));
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
 
         assertEquals(1, result.size());
         assertEquals("Library with Books", result.getFirst().getName());
@@ -105,10 +101,10 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         SearchCriterion subCriterion = new SearchCriterion("membershipStatus", "eq", "Active");
         List<SearchCriterion> criteria = List.of(
                 new SearchCriterion("name", "eq", "Multi-Criteria Library"),
-                new SearchCriterion("membership", "exists", List.of(subCriterion))
-        );
+                new SearchCriterion("membership", "exists", List.of(subCriterion)));
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
 
         assertEquals(1, result.size());
         assertEquals("Multi-Criteria Library", result.getFirst().getName());
@@ -143,10 +139,10 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
 
         List<SearchCriterion> criteria = List.of(
                 new SearchCriterion("name", "eq", "Library with Books"),
-                new SearchCriterion("book", "exists", List.of(new SearchCriterion("title", "like", "%Python%")))
-        );
+                new SearchCriterion("book", "exists", List.of(new SearchCriterion("title", "like", "%Python%"))));
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
 
         assertEquals(0, result.size());
     }
@@ -177,11 +173,10 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                 .build();
         libraryRepository.save(library2);
 
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("name", "ne", "Library A")
-        );
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("name", "ne", "Library A"));
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Library B", result.getFirst().getName());
     }
@@ -214,11 +209,10 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         bookRepository.save(book);
 
         SearchCriterion subCriterion = new SearchCriterion("title", "like", "%Silence%");
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("book", "notExists", List.of(subCriterion))
-        );
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("book", "notExists", List.of(subCriterion)));
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Quiet Library", result.getFirst().getName());
     }
@@ -237,11 +231,10 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                 .build();
         bookRepository.save(book);
 
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("publishYear", "gt", "1990")
-        );
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("publishYear", "gt", "1990"));
 
-        List<Book> result = criteriaQueryBuilder.buildQuery(criteria, Book.class).fetch();
+        List<Book> result =
+                criteriaQueryBuilder.buildQuery(criteria, Book.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Historical Events", result.getFirst().getTitle());
     }
@@ -260,11 +253,11 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                 .build();
         libraryRepository.save(library);
 
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("establishedDate", "gte", LocalDate.of(1999, 12, 31).toString())
-        );
+        List<SearchCriterion> criteria = List.of(new SearchCriterion(
+                "establishedDate", "gte", LocalDate.of(1999, 12, 31).toString()));
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Night Library", result.getFirst().getName());
     }
@@ -285,32 +278,29 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         bookRepository.save(book);
         bookRepository.saveAndFlush(book);
 
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("createdAt", "lte", LocalDateTime.now().plusDays(1).minusHours(1).toString())
-        );
+        List<SearchCriterion> criteria = List.of(new SearchCriterion(
+                "createdAt",
+                "lte",
+                LocalDateTime.now().plusDays(1).minusHours(1).toString()));
 
-        List<Book> result = criteriaQueryBuilder.buildQuery(criteria, Book.class).fetch();
+        List<Book> result =
+                criteriaQueryBuilder.buildQuery(criteria, Book.class).fetch();
         assertEquals(1, result.size());
     }
 
     @Test
     void testLibraryByIdInList() {
-        Library library1 = Library.builder()
-                .name("Library One")
-                .build();
+        Library library1 = Library.builder().name("Library One").build();
         libraryRepository.save(library1);
 
-        Library library2 = Library.builder()
-                .name("Library Two")
-                .build();
+        Library library2 = Library.builder().name("Library Two").build();
         libraryRepository.save(library2);
 
         List<Integer> ids = List.of(library1.getLibraryId(), library2.getLibraryId());
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("libraryId", "in", ids.toString())
-        );
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("libraryId", "in", ids.toString()));
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(2, result.size());
         assertTrue(result.stream().anyMatch(lib -> lib.getName().equals("Library One")));
         assertTrue(result.stream().anyMatch(lib -> lib.getName().equals("Library Two")));
@@ -318,22 +308,17 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
 
     @Test
     void testLibraryByIdNotInList() {
-        Library library1 = Library.builder()
-                .name("Library One")
-                .build();
+        Library library1 = Library.builder().name("Library One").build();
         libraryRepository.save(library1);
 
-        Library library2 = Library.builder()
-                .name("Library Two")
-                .build();
+        Library library2 = Library.builder().name("Library Two").build();
         libraryRepository.save(library2);
 
         List<Integer> ids = List.of(library1.getLibraryId());
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("libraryId", "notIn", ids.toString())
-        );
+        List<SearchCriterion> criteria = List.of(new SearchCriterion("libraryId", "notIn", ids.toString()));
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Library Two", result.getFirst().getName());
     }
@@ -394,20 +379,23 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         List<SearchCriterion> criteria = Arrays.asList(
                 new SearchCriterion("name", "like", "%research Library%"),
                 new SearchCriterion("location", "eq", "Research Blvd"),
-                new SearchCriterion("establishedDate", "gte", LocalDate.of(1950, 1, 1).toString()),
+                new SearchCriterion(
+                        "establishedDate", "gte", LocalDate.of(1950, 1, 1).toString()),
                 bookSubQuery,
                 authorSubQuery,
                 bookLanguageSubQuery,
-                bookGenreSubQuery
-        );
+                bookGenreSubQuery);
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertTrue(result.stream().anyMatch(lib -> "Complex Research Library".equals(lib.getName())));
-        assertTrue(result.stream().anyMatch(lib -> lib.getBooks().stream().anyMatch(b -> b.getTitle().contains("Deep Learning"))));
-        assertTrue(result.stream().anyMatch(lib -> lib.getBooks().stream().anyMatch(b -> "Author 3".equals(b.getAuthor().getName()))));
+        assertTrue(result.stream().anyMatch(lib -> lib.getBooks().stream()
+                .anyMatch(b -> b.getTitle().contains("Deep Learning"))));
+        assertTrue(result.stream().anyMatch(lib -> lib.getBooks().stream()
+                .anyMatch(b -> "Author 3".equals(b.getAuthor().getName()))));
     }
 
     @Test
@@ -450,17 +438,15 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
 
         eventParticipantRepository.save(participant);
 
-
         SearchCriterion userCriterion = new SearchCriterion("username", "eq", "nesteduser");
         SearchCriterion participantSubQuery = new SearchCriterion("user", "exists", List.of(userCriterion));
         SearchCriterion eventCriterion = new SearchCriterion("participant", "exists", List.of(participantSubQuery));
         SearchCriterion librarySubQuery = new SearchCriterion("event", "exists", List.of(eventCriterion));
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("name", "eq", "Nested Query Library"),
-                librarySubQuery
-        );
+        List<SearchCriterion> criteria =
+                List.of(new SearchCriterion("name", "eq", "Nested Query Library"), librarySubQuery);
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Nested Query Library", result.getFirst().getName());
     }
@@ -495,16 +481,19 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         SearchCriterion titleCriterion = new SearchCriterion("title", "like", "%C++%");
         SearchCriterion yearCriterion = new SearchCriterion("publishYear", "gt", "2010");
         SearchCriterion languageCriterion = new SearchCriterion("language", "eq", "French");
-        SearchCriterion genreCriterion = new SearchCriterion("genre", "notIn", List.of("Science", "Education").toString());
+        SearchCriterion genreCriterion = new SearchCriterion(
+                "genre", "notIn", List.of("Science", "Education").toString());
         SearchCriterion editionCriterion = new SearchCriterion("edition", "ne", "1st");
-        SearchCriterion bookSubQuery = new SearchCriterion("book", "exists", List.of(titleCriterion, yearCriterion, languageCriterion, genreCriterion, editionCriterion));
+        SearchCriterion bookSubQuery = new SearchCriterion(
+                "book",
+                "exists",
+                List.of(titleCriterion, yearCriterion, languageCriterion, genreCriterion, editionCriterion));
 
-        List<SearchCriterion> criteria = List.of(
-                new SearchCriterion("name", "eq", "Central City Library"),
-                bookSubQuery
-        );
+        List<SearchCriterion> criteria =
+                List.of(new SearchCriterion("name", "eq", "Central City Library"), bookSubQuery);
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
         assertEquals(1, result.size());
         assertEquals("Central City Library", result.getFirst().getName());
     }
@@ -533,11 +522,8 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
                 .build();
         userRepository.save(user);
 
-        LibraryStaff staff = LibraryStaff.builder()
-                .user(user)
-                .library(library)
-                .staffId(1)
-                .build();
+        LibraryStaff staff =
+                LibraryStaff.builder().user(user).library(library).staffId(1).build();
 
         libraryStaffRepository.save(staff);
 
@@ -584,27 +570,36 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
 
         SearchCriterion bookTitleCriterion = new SearchCriterion("book.title", "like", "%Research%");
         SearchCriterion bookYearCriterion = new SearchCriterion("book.publishYear", "gte", "2010");
-        SearchCriterion bookLanguageCriterion = new SearchCriterion("book.language", "in", List.of("English", "Spanish").toString());
-        List<SearchCriterion> borrowedBookCriteria = List.of(bookTitleCriterion, bookYearCriterion, bookLanguageCriterion);
+        SearchCriterion bookLanguageCriterion = new SearchCriterion(
+                "book.language", "in", List.of("English", "Spanish").toString());
+        List<SearchCriterion> borrowedBookCriteria =
+                List.of(bookTitleCriterion, bookYearCriterion, bookLanguageCriterion);
 
-        List<SearchCriterion> nonBorrowedBookCriteria = List.of(new SearchCriterion("book.title", "like", "%Medicine%"));
+        List<SearchCriterion> nonBorrowedBookCriteria =
+                List.of(new SearchCriterion("book.title", "like", "%Medicine%"));
 
         SearchCriterion staffIdCriterion = new SearchCriterion("staffId", "eq", "1");
         SearchCriterion staffUserFullNameCriterion = new SearchCriterion("user.fullName", "like", "%Buff%");
-        SearchCriterion staffUserDobCriterion = new SearchCriterion("user.dateOfBirth", "lte", LocalDate.of(1990, 1, 1).toString());
-        SearchCriterion staffUserBorrowedBookCriterion = new SearchCriterion("user.borrowedBook", "exists", borrowedBookCriteria);
-        SearchCriterion staffUserNonBorrowedBookCriterion = new SearchCriterion("user.borrowedBook", "notExists", nonBorrowedBookCriteria);
-        List<SearchCriterion> staffCriteria = List.of(staffIdCriterion, staffUserFullNameCriterion, staffUserDobCriterion, staffUserBorrowedBookCriterion, staffUserNonBorrowedBookCriterion);
+        SearchCriterion staffUserDobCriterion = new SearchCriterion(
+                "user.dateOfBirth", "lte", LocalDate.of(1990, 1, 1).toString());
+        SearchCriterion staffUserBorrowedBookCriterion =
+                new SearchCriterion("user.borrowedBook", "exists", borrowedBookCriteria);
+        SearchCriterion staffUserNonBorrowedBookCriterion =
+                new SearchCriterion("user.borrowedBook", "notExists", nonBorrowedBookCriteria);
+        List<SearchCriterion> staffCriteria = List.of(
+                staffIdCriterion,
+                staffUserFullNameCriterion,
+                staffUserDobCriterion,
+                staffUserBorrowedBookCriterion,
+                staffUserNonBorrowedBookCriterion);
 
         SearchCriterion libraryNameCriterion = new SearchCriterion("name", "notLike", "%Test%");
         SearchCriterion libraryStaffCriterion = new SearchCriterion("staff", "exists", staffCriteria);
 
-        List<SearchCriterion> criteria = List.of(
-                libraryNameCriterion,
-                libraryStaffCriterion
-        );
+        List<SearchCriterion> criteria = List.of(libraryNameCriterion, libraryStaffCriterion);
 
-        List<Library> result = criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
+        List<Library> result =
+                criteriaQueryBuilder.buildQuery(criteria, Library.class).fetch();
 
         assertEquals(1, result.size());
     }

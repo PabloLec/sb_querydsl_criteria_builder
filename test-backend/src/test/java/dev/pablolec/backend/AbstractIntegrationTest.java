@@ -13,35 +13,48 @@ import org.springframework.test.context.ActiveProfiles;
 public abstract class AbstractIntegrationTest {
     @Autowired
     protected LibraryRepository libraryRepository;
+
     @Autowired
     protected AddressRepository addressRepository;
+
     @Autowired
     protected AuthorRepository authorRepository;
+
     @Autowired
     protected BookRepository bookRepository;
+
     @Autowired
     protected TagRepository tagRepository;
+
     @Autowired
     protected BookTagRepository bookTagRepository;
+
     @Autowired
     protected UserRepository userRepository;
+
     @Autowired
     protected BorrowedBookRepository borrowedBookRepository;
+
     @Autowired
     protected ReviewRepository reviewRepository;
+
     @Autowired
     protected LibraryStaffRepository libraryStaffRepository;
+
     @Autowired
     protected MembershipRepository membershipRepository;
+
     @Autowired
     protected LibraryEventRepository libraryEventRepository;
+
     @Autowired
     protected EventParticipantRepository eventParticipantRepository;
+
     @Autowired
     protected PublisherRepository publisherRepository;
+
     @Autowired
     protected BookPublisherRepository bookPublisherRepository;
-
 
     @AfterEach
     void tearDown() {

@@ -2,10 +2,9 @@ package dev.pablolec.backend.db.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDate;
 import java.util.Set;
+import lombok.*;
 
 @Getter
 @Setter
@@ -18,6 +17,7 @@ public class Library {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer libraryId;
+
     private String name;
     private String location;
     private String openingHours;
@@ -36,12 +36,10 @@ public class Library {
     private Set<Membership> memberships;
 
     @OneToMany(mappedBy = "library")
-
     @JsonManagedReference
     private Set<LibraryEvent> events;
 
     @OneToMany(mappedBy = "library")
-
     @JsonManagedReference
     private Set<LibraryStaff> staff;
 }

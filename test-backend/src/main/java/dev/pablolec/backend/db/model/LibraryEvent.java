@@ -3,11 +3,10 @@ package dev.pablolec.backend.db.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
+import lombok.*;
 
 @Getter
 @Setter

@@ -1,16 +1,15 @@
 package dev.pablolec.backend.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 import dev.pablolec.backend.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
 class MockDataServiceTest extends AbstractIntegrationTest {
     @Autowired
     private MockDataService mockDataService;
-
 
     @Test
     void createMockLibraries() {
