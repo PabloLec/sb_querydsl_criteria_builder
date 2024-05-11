@@ -12,30 +12,26 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/shadcn/select';
-import {computed, watch} from 'vue';
-import { fieldsConfiguration } from '@/lib/search/fieldsConfiguration.ts';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/shadcn/select"
+import { computed, watch } from "vue"
+import { fieldsConfiguration } from "@/lib/search/fieldsConfiguration.ts"
 
 const props = defineProps({
-  parentField: String
-});
+  parentField: String,
+})
 
-const emit = defineEmits(['update:modelValue', 'change']);
+const emit = defineEmits(["update:modelValue", "change"])
 
-const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField]);
+const currentFieldsConfig = computed(() => fieldsConfiguration[props.parentField])
 
 const handleChange = (value: string | number) => {
-  emit('update:modelValue', value);
-};
+  emit("update:modelValue", value)
+}
 
-watch(() => props.modelValue, (newValue) => {
-  console.log("New modelValue received:", newValue);
-});
-
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    console.log("New modelValue received:", newValue)
+  }
+)
 </script>

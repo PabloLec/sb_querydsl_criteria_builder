@@ -12,29 +12,23 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/shadcn/select';
-import { computed } from 'vue';
-import { fieldsConfiguration } from '@/lib/search/fieldsConfiguration';
-import { fieldTypeToOperators } from '@/lib/search/operators';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/shadcn/select"
+import { computed } from "vue"
+import { fieldsConfiguration } from "@/lib/search/fieldsConfiguration"
+import { fieldTypeToOperators } from "@/lib/search/operators"
 
 const props = defineProps({
   field: String,
-  parentField: String
-});
+  parentField: String,
+})
 
-const emit = defineEmits(['update:modelValue', 'change']);
+const emit = defineEmits(["update:modelValue", "change"])
 
-const fieldConfig = computed(() => fieldsConfiguration[props.parentField][props.field]);
+const fieldConfig = computed(() => fieldsConfiguration[props.parentField][props.field])
 
-const operators = computed(() => fieldTypeToOperators[fieldConfig.value.fieldType] || []);
+const operators = computed(() => fieldTypeToOperators[fieldConfig.value.fieldType] || [])
 
 const handleChange = (value: string) => {
-  emit('update:modelValue', value);
-};
+  emit("update:modelValue", value)
+}
 </script>
