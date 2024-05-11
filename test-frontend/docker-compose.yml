@@ -3,3 +3,5 @@ services:
     build: .
     ports:
       - "4173:4173"
+    environment:
+      VITE_BACKEND_URL: ${BACKEND_URL:-http://localhost:8080}

@@ -1,7 +1,9 @@
 import axios from "axios"
 import { Library, SearchCriterion } from "@/lib/search/types.ts"
 
-const API_URL = "http://localhost:8080/api/v1"
+const API_URL = import.meta.env.VITE_BACKEND_URL
+  ? `${import.meta.env.VITE_BACKEND_URL}/api/v1`
+  : "http://localhost:8080/api/v1"
 
 export const getLibrariesByQuery = async (query: SearchCriterion[]): Promise<Library[]> => {
   try {
