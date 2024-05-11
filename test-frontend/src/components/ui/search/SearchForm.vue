@@ -8,6 +8,7 @@
               v-model="criterion.field"
               @change="() => updateFieldConfig(criterion)"
               :parent-field="parentField"
+              :data-testid="parentField + '-field-' + index"
             />
           </div>
           <div class="flex-none">
@@ -16,6 +17,7 @@
               v-model="criterion.op"
               :field="criterion.field"
               :parent-field="parentField"
+              :data-testid="parentField + '-operation-' + index"
             />
           </div>
           <div class="flex-grow">
@@ -24,6 +26,7 @@
               v-model="criterion.value"
               :field="criterion.field"
               :parent-field="parentField"
+              :data-testid="parentField + '-value-' + index"
             />
           </div>
         </div>
@@ -32,6 +35,7 @@
           size="icon"
           @click="removeCriterion(index)"
           class="hover:text-destructive flex-shrink-0 w-10 h-10"
+          :data-testid="criterion.field + '-remove-criterion-button-' + index"
         >
           <CircleMinus class="w-4 h-4 flex-shrink-0" />
         </Button>
@@ -45,17 +49,31 @@
           variant="outline"
           @click="() => addSubCriterion(criterion)"
           class="flex-shrink-0 w-8 h-8"
+          :data-testid="criterion.field + '-add-sub-criterion-button'"
         >
           <Plus class="w-4 h-4 flex-shrink-0" />
         </Button>
       </div>
     </div>
-    <Button v-if="isRoot" variant="outline" @click="addCriterion" class="flex-shrink-0 w-8 h-8">
+    <Button
+      v-if="isRoot"
+      variant="outline"
+      @click="addCriterion"
+      class="flex-shrink-0 w-8 h-8"
+      :data-testid="parentField + '-add-criterion-button'"
+    >
       <Plus class="w-4 h-4 flex-shrink-0" />
     </Button>
     <Separator v-if="isRoot" class="m-4" />
     <div class="flex justify-end mt-4">
-      <Button v-if="isRoot" @click="search" class="bg-blue-400 flex-shrink-0 mr-6"> Search </Button>
+      <Button
+        v-if="isRoot"
+        @click="search"
+        class="bg-blue-400 flex-shrink-0 mr-6"
+        :data-testid="'search-button'"
+      >
+        Search
+      </Button>
     </div>
   </div>
 </template>

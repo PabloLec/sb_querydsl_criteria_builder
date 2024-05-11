@@ -1,5 +1,10 @@
 <template>
-  <div :class="{ 'border-red-400 border-2 rounded-lg': !props.modelValue && hasValueField }">
+  <div
+    :class="{
+      'border-red-400 border-2 rounded-lg w-full': !props.modelValue && isInput,
+      'border-red-400 border-2 rounded-lg w-fit': !props.modelValue && hasValueField,
+    }"
+  >
     <Input
       v-if="isInput"
       :modelValue="modelValue"
@@ -7,9 +12,15 @@
       placeholder="Value"
       @update:modelValue="handleChange"
       class="w-full"
+      :data-testid="props.dataTestid + '-input'"
     />
 
-    <Select v-if="isSelect" :modelValue="stringModelValue" @update:modelValue="handleChange">
+    <Select
+      v-if="isSelect"
+      :modelValue="stringModelValue"
+      @update:modelValue="handleChange"
+      :data-testid="props.dataTestid + '-select'"
+    >
       <SelectTrigger class="w-[180px]">
         <SelectValue placeholder="Value" />
       </SelectTrigger>
@@ -25,13 +36,14 @@
         <Button
           variant="outline"
           :class="cn('w-[280px] justify-start text-left font-normal', !dateValue && 'text-muted-foreground')"
+          :data-testid="props.dataTestid + '-date-button'"
         >
           <CalendarIcon class="mr-2 h-4 w-4" />
           {{ dateValue ? df.format(dateValue.toDate(getLocalTimeZone())) : "Pick a date" }}
         </Button>
       </PopoverTrigger>
       <PopoverContent class="w-auto p-0">
-        <Calendar v-model="dateValue" initial-focus />
+        <Calendar v-model="dateValue" initial-focus :data-testid="props.dataTestid + '-date-picker'" />
       </PopoverContent>
     </Popover>
   </div>
@@ -54,6 +66,7 @@ const props = defineProps({
   modelValue: [String, Number],
   field: String,
   parentField: String,
+  dataTestid: String,
 })
 
 const df = new DateFormatter("fr-FR", {

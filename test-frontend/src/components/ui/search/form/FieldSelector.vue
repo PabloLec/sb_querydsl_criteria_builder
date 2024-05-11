@@ -1,6 +1,6 @@
 <template>
-  <div :class="{ 'border-red-400 border-2 rounded-lg': !props.modelValue }">
-    <Select @update:modelValue="handleChange" class="">
+  <div :class="{ 'border-red-400 border-2 rounded-lg w-fit': !props.modelValue }">
+    <Select :modelValue="modelValue" @update:modelValue="handleChange">
       <SelectTrigger class="w-[180px]">
         <SelectValue placeholder="Field" />
       </SelectTrigger>
@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/shadcn/select"
-import { computed, watch } from "vue"
+import { computed } from "vue"
 import { fieldsConfiguration } from "@/lib/search/fieldsConfiguration.ts"
 import { FieldConfig } from "@/lib/search/types"
 
@@ -31,11 +31,4 @@ const currentFieldsConfig = computed(() => props.parentField && fieldsConfigurat
 const handleChange = (value: string | number) => {
   emit("update:modelValue", value)
 }
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    console.log("New modelValue received:", newValue)
-  }
-)
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'border-red-400 border-2 rounded-lg': !props.modelValue }">
+  <div :class="{ 'border-red-400 border-2 rounded-lg w-fit': !props.modelValue }">
     <Select :modelValue="modelValue" @update:modelValue="handleChange">
       <SelectTrigger class="w-[180px]">
         <SelectValue placeholder="Select operation" />
