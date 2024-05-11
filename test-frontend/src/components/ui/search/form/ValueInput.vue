@@ -1,38 +1,40 @@
 <template>
-  <Input
-    v-if="isInput"
-    :modelValue="modelValue"
-    type="text"
-    placeholder="Value"
-    @update:modelValue="handleChange"
-    class="w-full"
-  />
+  <div :class="{ 'border-red-400 border-2 rounded-lg': !props.modelValue && hasValueField }">
+    <Input
+      v-if="isInput"
+      :modelValue="modelValue"
+      type="text"
+      placeholder="Value"
+      @update:modelValue="handleChange"
+      class="w-full"
+    />
 
-  <Select v-if="isSelect" :modelValue="stringModelValue" @update:modelValue="handleChange">
-    <SelectTrigger class="w-[180px]">
-      <SelectValue placeholder="Value" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem v-for="value in valueOptions" :key="value" :value="value">
-        {{ value }}
-      </SelectItem>
-    </SelectContent>
-  </Select>
+    <Select v-if="isSelect" :modelValue="stringModelValue" @update:modelValue="handleChange">
+      <SelectTrigger class="w-[180px]">
+        <SelectValue placeholder="Value" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem v-for="value in valueOptions" :key="value" :value="value">
+          {{ value }}
+        </SelectItem>
+      </SelectContent>
+    </Select>
 
-  <Popover v-if="isDate">
-    <PopoverTrigger as-child>
-      <Button
-        variant="outline"
-        :class="cn('w-[280px] justify-start text-left font-normal', !dateValue && 'text-muted-foreground')"
-      >
-        <CalendarIcon class="mr-2 h-4 w-4" />
-        {{ dateValue ? df.format(dateValue.toDate(getLocalTimeZone())) : "Pick a date" }}
-      </Button>
-    </PopoverTrigger>
-    <PopoverContent class="w-auto p-0">
-      <Calendar v-model="dateValue" initial-focus />
-    </PopoverContent>
-  </Popover>
+    <Popover v-if="isDate">
+      <PopoverTrigger as-child>
+        <Button
+          variant="outline"
+          :class="cn('w-[280px] justify-start text-left font-normal', !dateValue && 'text-muted-foreground')"
+        >
+          <CalendarIcon class="mr-2 h-4 w-4" />
+          {{ dateValue ? df.format(dateValue.toDate(getLocalTimeZone())) : "Pick a date" }}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent class="w-auto p-0">
+        <Calendar v-model="dateValue" initial-focus />
+      </PopoverContent>
+    </Popover>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -88,6 +90,13 @@ const isDate = computed(
 const valueOptions = computed(
   () =>
     (currentFieldsConfig.value && props.field && currentFieldsConfig.value[props.field]?.valueOptions) ?? []
+)
+
+const hasValueField = computed(
+  () =>
+    currentFieldsConfig.value &&
+    props.field &&
+    !(currentFieldsConfig.value[props.field]?.fieldType === "subquery")
 )
 
 watch(dateValue, (newDate) => {

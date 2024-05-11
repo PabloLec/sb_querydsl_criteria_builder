@@ -5,62 +5,52 @@ const libraryFieldsConfiguration: Record<string, FieldConfig> = {
     label: "ID",
     fieldType: "number",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   name: {
     label: "Name",
     fieldType: "string",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   location: {
     label: "Location",
     fieldType: "string",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   openingHours: {
     label: "Opening Hours",
     fieldType: "string",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   establishedDate: {
     label: "Established Date",
     fieldType: "date",
     valueComponent: "date",
-    isFieldWithSubCriteria: false,
   },
   website: {
     label: "Website",
     fieldType: "string",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   email: {
     label: "Email",
     fieldType: "string",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   phoneNumber: {
     label: "Phone Number",
     fieldType: "string",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   isOpen: {
     label: "Is Open",
     fieldType: "boolean",
     valueComponent: "select",
     valueOptions: ["Yes", "No"],
-    isFieldWithSubCriteria: false,
   },
   book: {
     label: "Book",
     fieldType: "subquery",
     valueComponent: "none",
-    isFieldWithSubCriteria: true,
   },
 }
 
@@ -69,31 +59,26 @@ const bookFieldsConfiguration: Record<string, FieldConfig> = {
     label: "ID",
     fieldType: "number",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   title: {
     label: "Title",
     fieldType: "string",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   isbn: {
     label: "ISBN",
     fieldType: "string",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   publishYear: {
     label: "Publish Year",
     fieldType: "number",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   edition: {
     label: "Edition",
     fieldType: "string",
     valueComponent: "input",
-    isFieldWithSubCriteria: false,
   },
   language: {
     label: "Language",
@@ -111,7 +96,6 @@ const bookFieldsConfiguration: Record<string, FieldConfig> = {
       "Japanese",
       "Korean",
     ],
-    isFieldWithSubCriteria: false,
   },
   genre: {
     label: "Genre",
@@ -145,7 +129,6 @@ const bookFieldsConfiguration: Record<string, FieldConfig> = {
       "Teen",
       "Young Adult",
     ],
-    isFieldWithSubCriteria: false,
   },
 }
 

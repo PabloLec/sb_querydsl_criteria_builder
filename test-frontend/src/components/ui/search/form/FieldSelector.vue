@@ -1,14 +1,16 @@
 <template>
-  <Select @update:modelValue="handleChange">
-    <SelectTrigger class="w-[180px]">
-      <SelectValue placeholder="Field" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem v-for="(config, field) in currentFieldsConfig" :key="field" :value="field">
-        {{ (config as FieldConfig).label }}
-      </SelectItem>
-    </SelectContent>
-  </Select>
+  <div :class="{ 'border-red-400 border-2 rounded-lg': !props.modelValue }">
+    <Select @update:modelValue="handleChange" class="">
+      <SelectTrigger class="w-[180px]">
+        <SelectValue placeholder="Field" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem v-for="(config, field) in currentFieldsConfig" :key="field" :value="field">
+          {{ (config as FieldConfig).label }}
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
 </template>
 
 <script lang="ts" setup>

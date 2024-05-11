@@ -1,14 +1,16 @@
 <template>
-  <Select :modelValue="modelValue" @update:modelValue="handleChange">
-    <SelectTrigger class="w-[180px]">
-      <SelectValue placeholder="Select operation" />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem v-for="operator in operators" :key="operator.op" :value="operator.op">
-        {{ operator.label }}
-      </SelectItem>
-    </SelectContent>
-  </Select>
+  <div :class="{ 'border-red-400 border-2 rounded-lg': !props.modelValue }">
+    <Select :modelValue="modelValue" @update:modelValue="handleChange">
+      <SelectTrigger class="w-[180px]">
+        <SelectValue placeholder="Select operation" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem v-for="operator in operators" :key="operator.op" :value="operator.op">
+          {{ operator.label }}
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -35,7 +37,7 @@ const operators = computed(
 
 watchEffect(() => {
   // Set a default value for subQuery base field
-  if (!props.modelValue && fieldConfig.value && fieldConfig.value.isFieldWithSubCriteria) {
+  if (!props.modelValue && fieldConfig.value && fieldConfig.value.fieldType === "subquery") {
     emit("update:modelValue", operators.value[0].op)
   }
 })

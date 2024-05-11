@@ -135,12 +135,12 @@ const currentFieldsConfig = computed(() => props.parentField && fieldsConfigurat
 const hasValueInput = (field: string | undefined) =>
   field && currentFieldsConfig.value && currentFieldsConfig.value[field]?.valueComponent
 const isFieldWithSubCriteria = (field: string | undefined): boolean =>
-  !!field && !!currentFieldsConfig.value && !!currentFieldsConfig.value[field]?.isFieldWithSubCriteria
+  !!field && !!currentFieldsConfig.value && currentFieldsConfig.value[field]?.fieldType === "subquery"
 const hasSubCriteria = (criterion: SearchCriterion) =>
   criterion.subCriteria &&
   criterion.field &&
   currentFieldsConfig.value &&
-  currentFieldsConfig.value[criterion.field]?.isFieldWithSubCriteria
+  currentFieldsConfig.value[criterion.field]?.fieldType === "subquery"
 
 const addCriterion = () => {
   props.criteria?.push({ field: "", op: "", value: "", subCriteria: [] })
