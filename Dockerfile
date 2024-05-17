@@ -1,5 +1,7 @@
 FROM eclipse-temurin:21-jdk-alpine AS builder
 
+RUN apk add --no-cache maven
+
 WORKDIR /app
 
 COPY pom.xml .
