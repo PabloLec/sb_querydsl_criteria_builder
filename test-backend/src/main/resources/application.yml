@@ -2,5 +2,5 @@ spring:
   application:
     name: backend
   datasource:
-    url: jdbc:sqlite:database.db
+    url: "jdbc:sqlite::memory:"
     driver-class-name: org.sqlite.JDBC

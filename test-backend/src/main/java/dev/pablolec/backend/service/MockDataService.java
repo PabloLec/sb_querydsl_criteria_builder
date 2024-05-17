@@ -6,9 +6,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,30 +30,39 @@ public class MockDataService {
     private final LibraryEventRepository libraryEventRepository;
     private final EventParticipantRepository eventParticipantRepository;
 
-    private final Random random = new Random();
-
-    public void createMockLibraries(int count) {
-        log.info("Creating {} mock libraries", count);
-        for (int i = 0; i < count; i++) {
-            Library library = createLibrary();
-            createAddressForLibrary(library);
-            createLibraryStaff(library);
-            createLibraryEvents(library);
-            createMembership(library);
-            createBooksAndAssociatedData(library);
+    @EventListener(ApplicationReadyEvent.class)
+    public void onApplicationReady() {
+        if (libraryRepository.count() == 0) {
+            log.info("Database is empty. Creating mock libraries.");
+            createMockLibraries(10);
+        } else {
+            log.info("Database already contains data. No mock data created.");
         }
     }
 
-    private Library createLibrary() {
+    public void createMockLibraries(int count) {
+        log.info("Creating {} mock libraries", count);
+        long currentLibraryCount = libraryRepository.count();
+        for (int i = 0; i < count; i++) {
+            Library library = createLibrary(i + currentLibraryCount);
+            createAddressForLibrary(library, i + currentLibraryCount);
+            createLibraryStaff(library, i + currentLibraryCount);
+            createLibraryEvents(library, i + currentLibraryCount);
+            createMembership(library, i + currentLibraryCount);
+            createBooksAndAssociatedData(library, i + currentLibraryCount);
+        }
+    }
+
+    private Library createLibrary(long index) {
         Library library = Library.builder()
-                .name("Library " + random.nextInt(1, 1000))
-                .location("Location " + random.nextInt(1, 1000))
+                .name("Library " + index)
+                .location("Location " + index)
                 .openingHours("09:00 - 17:00")
-                .establishedDate(LocalDate.now().minusYears(random.nextInt(1, 50) + 1))
-                .website("http://www.librarywebsite.com/" + random.nextInt(1, 1000))
-                .email("contact@library" + random.nextInt(1, 1000) + ".com")
-                .phoneNumber("123-456-" + random.nextInt(1, 9999))
-                .isOpen(random.nextBoolean())
+                .establishedDate(LocalDate.now().minusYears(index % 50 + 1))
+                .website("http://www.librarywebsite.com/" + index)
+                .email("contact@library" + index + ".com")
+                .phoneNumber("123-456-" + String.format("%04d", index))
+                .isOpen(index % 2 == 0)
                 .build();
 
         log.info("Creating library: {}", library);
@@ -60,14 +70,14 @@ public class MockDataService {
         return libraryRepository.save(library);
     }
 
-    private void createAddressForLibrary(Library library) {
+    private void createAddressForLibrary(Library library, long index) {
         Address address = Address.builder()
                 .libraryId(library.getLibraryId())
-                .street("Street " + random.nextInt(1, 1000))
-                .city("City " + random.nextInt(1, 1000))
-                .state("State " + random.nextInt(1, 50))
-                .country("Country " + random.nextInt(1, 50))
-                .postalCode(String.format("%05d", random.nextInt(1, 99999)))
+                .street("Street " + index)
+                .city("City " + index)
+                .state("State " + index % 50)
+                .country("Country " + index % 50)
+                .postalCode(String.format("%05d", index))
                 .build();
 
         log.info("Creating address: {} for library: {}", address, library.getLibraryId());
@@ -75,14 +85,14 @@ public class MockDataService {
         addressRepository.save(address);
     }
 
-    private void createLibraryStaff(Library library) {
-        int staffCount = 1 + random.nextInt(1, 10);
+    private void createLibraryStaff(Library library, long index) {
+        int staffCount = (int) (index % 10 + 1);
         for (int i = 0; i < staffCount; i++) {
-            User user = createUser();
+            User user = createUser(index * 10 + i);
             LibraryStaff libraryStaff = LibraryStaff.builder()
                     .library(library)
                     .user(user)
-                    .role("Role " + random.nextInt(1, 5))
+                    .role("Role " + (index % 5 + 1))
                     .build();
 
             log.info("Creating library staff: {} for library: {}", libraryStaff, library.getLibraryId());
@@ -91,14 +101,14 @@ public class MockDataService {
         }
     }
 
-    private void createLibraryEvents(Library library) {
-        int eventCount = random.nextInt(1, 5);
+    private void createLibraryEvents(Library library, long index) {
+        int eventCount = (int) (index % 5 + 1);
         for (int i = 0; i < eventCount; i++) {
             LibraryEvent libraryEvent = LibraryEvent.builder()
                     .library(library)
-                    .eventName("Event " + random.nextInt(1, 1000))
-                    .eventDate(LocalDate.now().plusDays(random.nextInt(1, 365)))
-                    .description("Description " + random.nextInt(1, 1000))
+                    .eventName("Event " + (index * 10 + i))
+                    .eventDate(LocalDate.now().plusDays(index % 365 + 1))
+                    .description("Description " + (index * 10 + i))
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
                     .build();
@@ -106,14 +116,14 @@ public class MockDataService {
             log.info("Creating library event: {} for library: {}", libraryEvent, library.getLibraryId());
 
             libraryEvent = libraryEventRepository.save(libraryEvent);
-            createEventParticipants(libraryEvent);
+            createEventParticipants(libraryEvent, index * 10 + i);
         }
     }
 
-    private void createEventParticipants(LibraryEvent libraryEvent) {
-        int participantCount = random.nextInt(1, 10);
+    private void createEventParticipants(LibraryEvent libraryEvent, long index) {
+        int participantCount = (int) (index % 10 + 1);
         for (int i = 0; i < participantCount; i++) {
-            User user = createUser();
+            User user = createUser(index * 10 + i);
             EventParticipant eventParticipant = EventParticipant.builder()
                     .eventId(libraryEvent.getEventId())
                     .userId(user.getUserId())
@@ -125,16 +135,16 @@ public class MockDataService {
         }
     }
 
-    private void createMembership(Library library) {
-        int memberCount = random.nextInt(1, 50);
+    private void createMembership(Library library, long index) {
+        int memberCount = (int) (index % 50 + 1);
         for (int i = 0; i < memberCount; i++) {
-            User user = createUser();
+            User user = createUser(index * 10 + i);
             Membership membership = Membership.builder()
                     .user(user)
                     .library(library)
-                    .joinDate(LocalDate.now().minusDays(random.nextInt(1, 365)))
-                    .expirationDate(LocalDate.now().plusDays(random.nextInt(1, 365)))
-                    .membershipStatus(random.nextBoolean() ? "Active" : "Inactive")
+                    .joinDate(LocalDate.now().minusDays(index % 365 + 1))
+                    .expirationDate(LocalDate.now().plusDays(index % 365 + 1))
+                    .membershipStatus(index % 2 == 0 ? "Active" : "Inactive")
                     .build();
 
             log.info("Creating membership: {} for library: {}", membership, library.getLibraryId());
@@ -143,25 +153,25 @@ public class MockDataService {
         }
     }
 
-    private void createBooksAndAssociatedData(Library library) {
-        int bookCount = random.nextInt(1, 50);
+    private void createBooksAndAssociatedData(Library library, long index) {
+        int bookCount = (int) (index % 50 + 1);
         for (int i = 0; i < bookCount; i++) {
-            Author author = createAuthor();
-            Book book = createBook(library, author);
-            createBookTags(book);
-            createBorrowedBooks(book);
-            createReviews(book);
+            Author author = createAuthor(index * 10 + i);
+            Book book = createBook(library, author, index * 10 + i);
+            createBookTags(book, index * 10 + i);
+            createBorrowedBooks(book, index * 10 + i);
+            createReviews(book, index * 10 + i);
         }
     }
 
-    private Author createAuthor() {
+    private Author createAuthor(long index) {
         Author author = Author.builder()
-                .name("Author " + random.nextInt(1, 1000))
-                .bio("Bio " + random.nextInt(1, 1000))
-                .nationality("Nationality " + random.nextInt(1, 1000))
-                .birthDate(LocalDate.now().minusYears(random.nextInt(1, 100) + 18))
-                .deathDate(random.nextBoolean() ? LocalDate.now().minusYears(random.nextInt(1, 100) + 18) : null)
-                .website("http://www.authorwebsite.com/" + random.nextInt(1, 1000))
+                .name("Author " + index)
+                .bio("Bio " + index)
+                .nationality("Nationality " + index)
+                .birthDate(LocalDate.now().minusYears(index % 100 + 18))
+                .deathDate(index % 2 == 0 ? LocalDate.now().minusYears(index % 100 + 18) : null)
+                .website("http://www.authorwebsite.com/" + index)
                 .build();
 
         log.info("Creating author: {}", author);
@@ -169,14 +179,14 @@ public class MockDataService {
         return authorRepository.save(author);
     }
 
-    private Book createBook(Library library, Author author) {
+    private Book createBook(Library library, Author author, long index) {
         Book book = Book.builder()
-                .title("Book Title " + random.nextInt(1, 1000))
-                .isbn("ISBN " + random.nextInt(1, 1000000))
-                .publishYear(LocalDate.now().getYear() - random.nextInt(1, 100))
-                .edition("Edition " + random.nextInt(1, 10))
-                .language("Language " + random.nextInt(1, 10))
-                .genre("Genre " + random.nextInt(1, 10))
+                .title("Book Title " + index)
+                .isbn("ISBN " + index)
+                .publishYear(LocalDate.now().getYear() - (int) (index % 100))
+                .edition("Edition " + (index % 10 + 1))
+                .language("Language " + (index % 10 + 1))
+                .genre("Genre " + (index % 10 + 1))
                 .library(library)
                 .author(author)
                 .createdAt(LocalDateTime.now())
@@ -188,12 +198,12 @@ public class MockDataService {
         return bookRepository.save(book);
     }
 
-    private void createBookTags(Book book) {
-        int tagCount = random.nextInt(1, 5);
+    private void createBookTags(Book book, long index) {
+        int tagCount = (int) (index % 5 + 1);
         for (int i = 0; i < tagCount; i++) {
             Tag tag = Tag.builder()
-                    .name("Tag " + random.nextInt(1, 1000))
-                    .description("Description " + random.nextInt(1, 1000))
+                    .name("Tag " + (index * 10 + i))
+                    .description("Description " + (index * 10 + i))
                     .build();
 
             log.info("Creating tag: {} for book: {}", tag, book.getBookId());
@@ -211,15 +221,15 @@ public class MockDataService {
         }
     }
 
-    private void createBorrowedBooks(Book book) {
-        int borrowCount = random.nextInt(1, 10);
+    private void createBorrowedBooks(Book book, long index) {
+        int borrowCount = (int) (index % 10 + 1);
         for (int i = 0; i < borrowCount; i++) {
-            User user = createUser();
+            User user = createUser(index * 10 + i);
             BorrowedBook borrowedBook = BorrowedBook.builder()
                     .book(book)
                     .user(user)
-                    .borrowDate(LocalDate.now().minusDays(random.nextInt(1, 30)))
-                    .returnDate(LocalDate.now().plusDays(random.nextInt(1, 30)))
+                    .borrowDate(LocalDate.now().minusDays(index % 30 + 1))
+                    .returnDate(LocalDate.now().plusDays(index % 30 + 1))
                     .build();
 
             log.info("Creating borrowed book: {} for book: {}", borrowedBook, book.getBookId());
@@ -228,16 +238,16 @@ public class MockDataService {
         }
     }
 
-    private void createReviews(Book book) {
-        int reviewCount = random.nextInt(1, 5);
+    private void createReviews(Book book, long index) {
+        int reviewCount = (int) (index % 5 + 1);
         for (int i = 0; i < reviewCount; i++) {
-            User user = createUser();
+            User user = createUser(index * 10 + i);
             Review review = Review.builder()
                     .book(book)
                     .user(user)
-                    .rating(BigDecimal.valueOf(random.nextDouble() * 5).setScale(2, RoundingMode.HALF_UP))
-                    .comment("Comment " + random.nextInt(1, 1000))
-                    .reviewDate(LocalDate.now().minusDays(random.nextInt(1, 100)))
+                    .rating(BigDecimal.valueOf(index % 5 + 1).setScale(2, RoundingMode.HALF_UP))
+                    .comment("Comment " + (index * 10 + i))
+                    .reviewDate(LocalDate.now().minusDays(index % 100 + 1))
                     .build();
 
             log.info("Creating review: {} for book: {}", review, book.getBookId());
@@ -246,14 +256,14 @@ public class MockDataService {
         }
     }
 
-    private User createUser() {
+    private User createUser(long index) {
         User user = User.builder()
-                .username("User" + random.nextInt(1, 1000))
-                .email("user" + random.nextInt(1, 1000) + "@mail.com")
-                .password("password" + random.nextInt(1, 1000))
-                .fullName("Full Name " + random.nextInt(1, 1000))
-                .dateOfBirth(LocalDate.now().minusYears(random.nextInt(1, 50) + 18))
-                .gender(random.nextBoolean() ? "Male" : "Female")
+                .username("User" + index)
+                .email("user" + index + "@mail.com")
+                .password("password" + index)
+                .fullName("Full Name " + index)
+                .dateOfBirth(LocalDate.now().minusYears(index % 50 + 18))
+                .gender(index % 2 == 0 ? "Male" : "Female")
                 .build();
 
         log.info("Creating user: {}", user);
