@@ -578,7 +578,6 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         List<SearchCriterion> nonBorrowedBookCriteria =
                 List.of(new SearchCriterion("book.title", "like", "%Medicine%"));
 
-        SearchCriterion staffIdCriterion = new SearchCriterion("staffId", "eq", "1");
         SearchCriterion staffUserFullNameCriterion = new SearchCriterion("user.fullName", "like", "%Buff%");
         SearchCriterion staffUserDobCriterion = new SearchCriterion(
                 "user.dateOfBirth", "lte", LocalDate.of(1990, 1, 1).toString());
@@ -587,7 +586,6 @@ class CriteriaQueryBuilderTests extends AbstractIntegrationTest {
         SearchCriterion staffUserNonBorrowedBookCriterion =
                 new SearchCriterion("user.borrowedBook", "notExists", nonBorrowedBookCriteria);
         List<SearchCriterion> staffCriteria = List.of(
-                staffIdCriterion,
                 staffUserFullNameCriterion,
                 staffUserDobCriterion,
                 staffUserBorrowedBookCriterion,
