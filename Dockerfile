@@ -7,6 +7,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY querydsl-criteria-builder ./querydsl-criteria-builder
 COPY test-backend ./test-backend
+COPY database.db ./database.db
 
 RUN --mount=type=cache,target=/root/.m2/repository mvn dependency:go-offline
 
@@ -17,6 +18,7 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 COPY --from=builder /app/test-backend/target/*.jar app.jar
+COPY --from=builder /app/database.db database.db
 
 EXPOSE 8080
 
