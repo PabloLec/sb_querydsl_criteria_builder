@@ -14,7 +14,7 @@
     "@tanstack/vue-table": "^8.17.3",
     "@vee-validate/zod": "^4.12.7",
     "@vueuse/core": "^10.9.0",
-    "axios": "^1.6.8",
+    "axios": "^1.7.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-vue-next": "^0.378.0",
