@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@internationalized/date':
-    specifier: ^3.5.3
-    version: 3.5.3
+    specifier: ^3.5.4
+    version: 3.5.4
   '@tanstack/vue-table':
     specifier: ^8.17.3
     version: 8.17.3(vue@3.4.27)
@@ -348,8 +348,8 @@ packages:
       - vue
     dev: false
 
-  /@internationalized/date@3.5.3:
-    resolution: {integrity: sha512-X9bi8NAEHAjD8yzmPYT2pdJsbe+tYSEBAfowtlxJVJdZR3aK8Vg7ZUT1Fm5M47KLzp/M1p1VwAaeSma3RT7biw==}
+  /@internationalized/date@3.5.4:
+    resolution: {integrity: sha512-qoVJVro+O0rBaw+8HPjUB1iH8Ihf8oziEnqMnvhJUSuVIrHOuZ6eNLHNvzXJKUvAtaDiqMnRlg8Z2mgh09BlUw==}
     dependencies:
       '@swc/helpers': 0.5.11
     dev: false
@@ -1360,7 +1360,7 @@ packages:
     dependencies:
       '@floating-ui/dom': 1.6.5
       '@floating-ui/vue': 1.0.6(vue@3.4.27)
-      '@internationalized/date': 3.5.3
+      '@internationalized/date': 3.5.4
       '@internationalized/number': 3.5.2
       '@tanstack/vue-virtual': 3.5.0(vue@3.4.27)
       '@vueuse/core': 10.9.0(vue@3.4.27)
