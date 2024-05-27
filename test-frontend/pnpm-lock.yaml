@@ -30,8 +30,8 @@ dependencies:
     specifier: ^0.379.0
     version: 0.379.0(vue@3.4.27)
   radix-vue:
-    specifier: ^1.8.1
-    version: 1.8.1(vue@3.4.27)
+    specifier: ^1.8.2
+    version: 1.8.2(vue@3.4.27)
   tailwind-merge:
     specifier: ^2.3.0
     version: 2.3.0
@@ -1353,8 +1353,8 @@ packages:
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
-  /radix-vue@1.8.1(vue@3.4.27):
-    resolution: {integrity: sha512-DFyUt2vc/89tpSHiJvv7Qb/Qs8zVxq2g7q4kuuDV46fmDmSC3mnV3hdSAYruU7k/KvoDpS3sd99kLGRtuG63Rw==}
+  /radix-vue@1.8.2(vue@3.4.27):
+    resolution: {integrity: sha512-ey6jG1rPAD/521PsXGrNkjztvh7PRw6Wwbk7LsHjsKqRoy/S4k58ryzmQ0tmoNOiUALfX92+MOnd5F3ONmuZ/w==}
     peerDependencies:
       vue: '>= 3.2.0'
     dependencies:
