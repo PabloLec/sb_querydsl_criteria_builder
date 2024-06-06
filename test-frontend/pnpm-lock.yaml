@@ -12,8 +12,8 @@ dependencies:
     specifier: ^8.17.3
     version: 8.17.3(vue@3.4.27)
   '@vee-validate/zod':
-    specifier: ^4.13.0
-    version: 4.13.0(vue@3.4.27)
+    specifier: ^4.13.1
+    version: 4.13.1(vue@3.4.27)
   '@vueuse/core':
     specifier: ^10.10.0
     version: 10.10.0(vue@3.4.27)
@@ -596,11 +596,11 @@ packages:
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
     dev: false
 
-  /@vee-validate/zod@4.13.0(vue@3.4.27):
-    resolution: {integrity: sha512-+ngXiAvUzlccI95a1TBzf3hk3wRWOYdlRgE/5pFpI4ZwH6I3wa3J/qD9T7vfTXk3xAMgAze6A8H/UwyNYeoBiA==}
+  /@vee-validate/zod@4.13.1(vue@3.4.27):
+    resolution: {integrity: sha512-8QLhY1vFNURT5rJF9GK34Rf9I/4Fx7CmF1rWeLEOYDshLzX0IxD6ByVEnIDl96Bu90A3wJSsZiXZNiv/yOyLbQ==}
     dependencies:
       type-fest: 4.18.2
-      vee-validate: 4.13.0(vue@3.4.27)
+      vee-validate: 4.13.1(vue@3.4.27)
       zod: 3.23.8
     transitivePeerDependencies:
       - vue
@@ -1603,6 +1603,16 @@ packages:
 
   /vee-validate@4.13.0(vue@3.4.27):
     resolution: {integrity: sha512-8v4C36sdEZfQm77E3A+Fg5M/sV7knqXoVNUjoI/aUHoDlFcATIUFvWLT7lqsOvvhAw6i4qzw+Q/Xs9zm9ndjsQ==}
+    peerDependencies:
+      vue: ^3.4.26
+    dependencies:
+      '@vue/devtools-api': 6.6.1
+      type-fest: 4.18.2
+      vue: 3.4.27(typescript@5.4.5)
+    dev: false
+
+  /vee-validate@4.13.1(vue@3.4.27):
+    resolution: {integrity: sha512-JAlUWTBHg0z66n+v66mrtE9IC1xmVCggzpyc7UXCNkizVok8Zgt1VAVjobSxA/0N19Zn6v6hRfjoYciYH/Z11Q==}
     peerDependencies:
       vue: ^3.4.26
     dependencies:
