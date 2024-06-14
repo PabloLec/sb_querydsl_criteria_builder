@@ -57,7 +57,7 @@ devDependencies:
     version: 20.14.2
   '@vitejs/plugin-vue':
     specifier: ^5.0.5
-    version: 5.0.5(vite@5.3.0)(vue@3.4.29)
+    version: 5.0.5(vite@5.3.1)(vue@3.4.29)
   autoprefixer:
     specifier: ^10.4.19
     version: 10.4.19(postcss@8.4.38)
@@ -71,8 +71,8 @@ devDependencies:
     specifier: ^5.4.5
     version: 5.4.5
   vite:
-    specifier: ^5.3.0
-    version: 5.3.0(@types/node@20.14.2)
+    specifier: ^5.3.1
+    version: 5.3.1(@types/node@20.14.2)
   vue-tsc:
     specifier: ^2.0.21
     version: 2.0.21(typescript@5.4.5)
@@ -614,14 +614,14 @@ packages:
       - vue
     dev: false
 
-  /@vitejs/plugin-vue@5.0.5(vite@5.3.0)(vue@3.4.29):
+  /@vitejs/plugin-vue@5.0.5(vite@5.3.1)(vue@3.4.29):
     resolution: {integrity: sha512-LOjm7XeIimLBZyzinBQ6OSm3UBCNVCpLkxGC0oWmm2YPzVZoxMsdvNVimLTBzpAnR9hl/yn1SHGuRfe6/Td9rQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
       vite: ^5.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 5.3.0(@types/node@20.14.2)
+      vite: 5.3.1(@types/node@20.14.2)
       vue: 3.4.29(typescript@5.4.5)
     dev: true
 
@@ -1651,8 +1651,8 @@ packages:
       vue: 3.4.29(typescript@5.4.5)
     dev: false
 
-  /vite@5.3.0(@types/node@20.14.2):
-    resolution: {integrity: sha512-hA6vAVK977NyW1Qw+fLvqSo7xDPej7von7C3DwwqPRmnnnK36XEBC/J3j1V5lP8fbt7y0TgTKJbpNGSwM+Bdeg==}
+  /vite@5.3.1(@types/node@20.14.2):
+    resolution: {integrity: sha512-XBmSKRLXLxiaPYamLv3/hnP/KXDai1NDexN0FpkTaZXTfycHvkRHoenpgl/fvuK/kPbB6xAgoyiryAhQNxYmAQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
