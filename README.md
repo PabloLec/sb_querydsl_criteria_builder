@@ -1,3 +1,9 @@
+<p align="center">
+    <img src="demo.png" alt="Example">
+</p>
+
+_____________________________
+
 # Project Overview
 
 This project provides a relatively simple and lightweight solution to the following problem:
