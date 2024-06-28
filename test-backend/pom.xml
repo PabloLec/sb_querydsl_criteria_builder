@@ -18,7 +18,7 @@
         <sqlite-jdbc.version>3.46.0.0</sqlite-jdbc.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.5.0</springdoc-openapi-starter-webmvc-ui.version>
         <spotless.version>2.43.0</spotless.version>
-        <playwright.version>1.44.0</playwright.version>
+        <playwright.version>1.45.0</playwright.version>
     </properties>
 
     <dependencies>
