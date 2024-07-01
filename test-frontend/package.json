@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.5.4",
-    "@tanstack/vue-table": "^8.17.3",
+    "@tanstack/vue-table": "^8.19.2",
     "@vee-validate/zod": "^4.13.1",
     "@vueuse/core": "^10.11.0",
     "axios": "^1.7.2",
