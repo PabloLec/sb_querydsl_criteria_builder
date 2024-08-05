@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@internationalized/date':
-        specifier: ^3.5.4
-        version: 3.5.4
+        specifier: ^3.5.5
+        version: 3.5.5
       '@tanstack/vue-table':
         specifier: ^8.19.2
         version: 8.19.2(vue@3.4.31(typescript@5.5.3))
@@ -252,8 +252,8 @@ packages:
   '@floating-ui/vue@1.1.1':
     resolution: {integrity: sha512-cyawjk9etPZPl/RVtMRnWrwtAhWbPVSrRVYARgOzhLIqxr0k2up1APrrFjqP9QwRQ0AwjKSvbWg4YC6jESutow==}
 
-  '@internationalized/date@3.5.4':
-    resolution: {integrity: sha512-qoVJVro+O0rBaw+8HPjUB1iH8Ihf8oziEnqMnvhJUSuVIrHOuZ6eNLHNvzXJKUvAtaDiqMnRlg8Z2mgh09BlUw==}
+  '@internationalized/date@3.5.5':
+    resolution: {integrity: sha512-H+CfYvOZ0LTJeeLOqm19E3uj/4YjrmOFtBufDHPfvtI80hFAMqtrp7oCACpe4Cil5l8S0Qu/9dYfZc/5lY8WQQ==}
 
   '@internationalized/number@3.5.3':
     resolution: {integrity: sha512-rd1wA3ebzlp0Mehj5YTuTI50AQEx80gWFyHcQu+u91/5NgdwBecO8BH6ipPfE+lmQ9d63vpB3H9SHoIUiupllw==}
@@ -1222,7 +1222,7 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@internationalized/date@3.5.4':
+  '@internationalized/date@3.5.5':
     dependencies:
       '@swc/helpers': 0.5.11
 
@@ -1835,7 +1835,7 @@ snapshots:
     dependencies:
       '@floating-ui/dom': 1.6.7
       '@floating-ui/vue': 1.1.1(vue@3.4.31(typescript@5.5.3))
-      '@internationalized/date': 3.5.4
+      '@internationalized/date': 3.5.5
       '@internationalized/number': 3.5.3
       '@tanstack/vue-virtual': 3.8.1(vue@3.4.31(typescript@5.5.3))
       '@vueuse/core': 10.11.0(vue@3.4.31(typescript@5.5.3))

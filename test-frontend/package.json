@@ -10,7 +10,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@internationalized/date": "^3.5.4",
+    "@internationalized/date": "^3.5.5",
     "@tanstack/vue-table": "^8.19.2",
     "@vee-validate/zod": "^4.13.2",
     "@vueuse/core": "^10.11.0",
